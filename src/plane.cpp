@@ -32,8 +32,6 @@ Plane::Plane(Point pt0, Point pt1, Point pt2) {
     __d -= pt0.y() * (pt2.x() - pt0.x()) * (pt1.z() - pt0.z());
     __d -= pt0.z() * (pt1.x() - pt0.x()) * (pt2.y() - pt0.y());
     __d += pt0.z() * (pt2.x() - pt0.x()) * (pt1.y() - pt0.y());
-    //__n = Vector(__a, __b, __c);
-    //std::cout << "normal " << this->n().x() << " " << this->n().y() << " " << this->n().z() << std::endl;
 };
 
 
@@ -118,17 +116,17 @@ bool Plane::isCrossedByLineSegment(LineSegment ls) {
         Vector v34 = Vector(pt3, pt4);
         Vector vCross = v3 + v34 * abs(det1) / (abs(det1) + abs(det2));
         __ptCross = Point(vCross.x(), vCross.y(), vCross.z());
-       //std::cout << "cross1 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
+        //std::cout << "cross1 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
         return true;
     }
     else if (det1 == 0) {
         __ptCross = pt3;
-       // std::cout << "cross2 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
+        //std::cout << "cross2 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
         return true;
     }
     else if (det2 == 0) {
         __ptCross = pt4;
-       // std::cout << "cross1 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
+        //std::cout << "cross1 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
         return true;
     }
     return false;

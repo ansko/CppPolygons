@@ -15,7 +15,8 @@ set (HEADERS
 	src/polygon.hpp
 	src/polygonal_cylinder.hpp
     src/vector.hpp
-    src/det.hpp)
+    src/det.hpp
+    src/settings_parser.hpp)
 
 set (SOURCES
         src/det.cpp 
@@ -26,7 +27,8 @@ set (SOURCES
 	    src/point.cpp
         src/polygon.cpp
         src/polygonal_cylinder.cpp
-        src/vector.cpp)
+        src/vector.cpp
+        src/settings_parser.cpp)
  
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 

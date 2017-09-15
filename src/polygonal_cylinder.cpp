@@ -3,7 +3,6 @@
 
 #include "polygonal_cylinder.hpp"
 
-
 const float  PI_F = 3.14159265358979f;
 
 
@@ -49,20 +48,45 @@ Polygon PolygonalCylinder::bottomFacet() {
 };
 
 bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPolygonalCylinder) {
-    std::vector<Polygon> polygons, otherPolygons;
-    polygons.push_back(*topFacet_ptr);
-    polygons.push_back(*bottomFacet_ptr);
-    //for (auto facet : __facets)
-    //    polygons.push_back(facet);
-    otherPolygons.push_back(otherPolygonalCylinder.topFacet());
-    otherPolygons.push_back(otherPolygonalCylinder.bottomFacet());
-    //for (auto facet : otherPolygonalCylinder.facets())
-    //    polygons.push_back(facet);
-    for(int i = 0; i < polygons.size(); ++i)
-        for(int j = 0; j < otherPolygons.size(); ++j)
-            if (polygons[i].crossesOtherPolygon(otherPolygons[j]))
-                //std::cout << "ij " << i << " " << j << " \n";
+    SettingsParser sp("options.ini");
+    sp.parseSettings();
+    float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
+    float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+
+    // if they are very close or very far
+    Point tc = topFacet_ptr->center();
+    Point bc = bottomFacet_ptr->center();
+    Point otherTc = otherPolygonalCylinder.topFacet().center();
+    Point otherBc = otherPolygonalCylinder.bottomFacet().center();
+    Vector vc = Vector(tc.x() + bc.x(), tc.y() + bc.y(), tc.z() + bc.z()) / 2;
+    Point c(vc.x(), vc.y(), vc.z());
+    Vector otherVc = Vector(otherTc.x() + otherBc.x(),\
+                            otherTc.y() + otherBc.y(),\
+                            otherTc.z() + otherBc.z()) / 2;
+    Point otherC(otherVc.x(), otherVc.y(), otherVc.z());
+    float centersDistance = Vector(c, otherC).length();
+    float veryCloseDistance = 2 * THICKNESS;
+    float veryFarDistance = 2 * pow(pow(OUTER_RADIUS, 2) + pow(THICKNESS/2, 2), 0.5);
+    if (centersDistance > veryFarDistance)
+        return false;
+    else if (centersDistance < veryCloseDistance)
+        return true;
+
+    // intermediate situation
+    std::vector<Polygon> polys, otherPolys;
+    polys.push_back(*topFacet_ptr);
+    polys.push_back(*bottomFacet_ptr);
+    for (auto facet : __facets)
+        polys.push_back(facet);
+    otherPolys.push_back(otherPolygonalCylinder.topFacet());
+    otherPolys.push_back(otherPolygonalCylinder.bottomFacet());
+    for (auto facet : otherPolygonalCylinder.facets())
+        otherPolys.push_back(facet);
+    for (auto poly : polys)
+        for (auto otherPoly : otherPolys) {
+            if (poly.crossesOtherPolygon(otherPoly))
                 return true;
+        }
     return false;
 };
 

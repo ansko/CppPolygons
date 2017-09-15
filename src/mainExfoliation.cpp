@@ -10,14 +10,7 @@
 #include "vector.hpp"
 
 #include "printToCSG.cpp"
-
-#define CUBE_EDGE_LENGTH 20.
-#define MAX_ATTEMPTS 50000.
-#define DISKS_NUM 100.
-#define VERTICES_NUMBER 8.
-#define THICKNESS 1.
-#define OUTER_RADIUS 5.
-#define FNAME "1.geo"
+#include "settings_parser.hpp"
 
 const float  PI_F = 3.14159265358979f;
 
@@ -27,12 +20,24 @@ int main(int argc, char **argv) {
     std::vector<PolygonalCylinder> pcs;
     int attempt = 0;
 
+
+    SettingsParser sp("options.ini");
+    sp.parseSettings();
+    float CUBE_EDGE_LENGTH = (float)std::stod(sp.getProperty("CUBE_EDGE_LENGTH"));
+    int VERTICES_NUMBER = (int)std::stod(sp.getProperty("VERTICES_NUMBER"));
+    float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
+    float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+    int DISKS_NUM = (int)std::stod(sp.getProperty("DISKS_NUM"));
+    int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
+    std::string FNAME = sp.getProperty("FNAME");
+
     PolygonalCylinder pc(VERTICES_NUMBER, THICKNESS, OUTER_RADIUS);
 
     std::srand(unsigned(std::time(0)));
     while (pcs.size() < DISKS_NUM && attempt < MAX_ATTEMPTS) {
         attempt++;
-        //std::cout << attempt << " " << pcs.size() << " ";
+        if (attempt % 1000 == 0)
+            std::cout << attempt << " " << pcs.size() << " \n";
         PolygonalCylinder pc(VERTICES_NUMBER, THICKNESS, OUTER_RADIUS);
         float dx = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dy = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
@@ -53,14 +58,11 @@ int main(int argc, char **argv) {
                 }
         if (flag == 0) {
             pcs.push_back(pc);
-            //std::cout << "appended\n";
         }
         else if (flag == 1)
         {}
-            //std::cout << "disk cross\n";
         else
         {}
-           // std::cout << "box cross\n";
     }
     std::cout << "volume fraction = " << pcs.size() * PI_F * pow(OUTER_RADIUS, 2) * THICKNESS / pow(CUBE_EDGE_LENGTH, 3) << std::endl;
     printToCSG(FNAME, pcs);

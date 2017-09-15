@@ -4,18 +4,19 @@
 
 #include "plane.hpp"
 #include "polygonal_cylinder.hpp"
+#include "settings_parser.hpp"
 
-#define CUBE_EDGE_LENGTH 20.
-#define MAX_ATTEMPTS 50000.
-#define DISKS_NUM 100.
-#define VERTICES_NUMBER 8.
-#define THICKNESS 1.
-#define OUTER_RADIUS 5.
-#define FNAME "1.geo"
 
 void printToCSG(std::string fname, std::vector<PolygonalCylinder> pcs) {
     std::ofstream fout;
     fout.open(fname);
+
+    SettingsParser sp("options.ini");
+    sp.parseSettings();
+    std::string CUBE_EDGE_LENGTH = sp.getProperty("CUBE_EDGE_LENGTH");
+    std::string VERTICES_NUMBER = sp.getProperty("VERTICES_NUMBER");
+    std::string THICKNESS = sp.getProperty("THICKNESS");
+    std::string OUTER_RADIUS = sp.getProperty("OUTER_RADIUS");
 
     std::string fillerString = "solid filler = polygonalCylinder0";
 

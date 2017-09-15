@@ -5,6 +5,7 @@
 
 #include "point.hpp"
 #include "polygon.hpp"
+#include "settings_parser.hpp"
 
 
 class PolygonalCylinder {

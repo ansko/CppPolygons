@@ -89,8 +89,14 @@ float Vector::scalarMultiply(Vector otherVector) {
 }
 
 Vector Vector::dot4(std::vector<std::vector<float> > M) {
-    float x = this->x() * M[0][0] + this->y() * M[1][0] + this->z() * M[2][0] + M[3][0];
-    float y = this->x() * M[0][1] + this->y() * M[1][1] + this->z() * M[2][1] + M[3][1];
-    float z = this->x() * M[0][2] + this->y() * M[1][2] + this->z() * M[2][2] + M[3][2];
+    float x = this->x() * M[0][0] +\
+              this->y() * M[1][0] +\
+              this->z() * M[2][0] + M[3][0];
+    float y = this->x() * M[0][1] +\
+              this->y() * M[1][1] +\
+              this->z() * M[2][1] + M[3][1];
+    float z = this->x() * M[0][2] +\
+              this->y() * M[1][2] +\
+              this->z() * M[2][2] + M[3][2];
     return Vector(x, y, z);
 };
