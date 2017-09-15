@@ -31,3 +31,8 @@ Point LineSegment::begin() {
 Point LineSegment::end() {
     return __end;
 };
+
+bool LineSegment::isCrossedByOtherLineSegment(LineSegment otherLs) {
+    // todo
+    return true;
+};

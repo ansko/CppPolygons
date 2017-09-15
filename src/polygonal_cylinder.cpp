@@ -52,15 +52,16 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
     std::vector<Polygon> polygons, otherPolygons;
     polygons.push_back(*topFacet_ptr);
     polygons.push_back(*bottomFacet_ptr);
-    for (auto facet : __facets)
-        polygons.push_back(facet);
+    //for (auto facet : __facets)
+    //    polygons.push_back(facet);
     otherPolygons.push_back(otherPolygonalCylinder.topFacet());
     otherPolygons.push_back(otherPolygonalCylinder.bottomFacet());
-    for (auto facet : otherPolygonalCylinder.facets())
-        polygons.push_back(facet);
+    //for (auto facet : otherPolygonalCylinder.facets())
+    //    polygons.push_back(facet);
     for(int i = 0; i < polygons.size(); ++i)
         for(int j = 0; j < otherPolygons.size(); ++j)
             if (polygons[i].crossesOtherPolygon(otherPolygons[j]))
+                //std::cout << "ij " << i << " " << j << " \n";
                 return true;
     return false;
 };

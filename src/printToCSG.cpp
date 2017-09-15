@@ -7,7 +7,7 @@
 
 #define CUBE_EDGE_LENGTH 20.
 #define MAX_ATTEMPTS 50000.
-#define DISKS_NUM 10.
+#define DISKS_NUM 100.
 #define VERTICES_NUMBER 8.
 #define THICKNESS 1.
 #define OUTER_RADIUS 5.

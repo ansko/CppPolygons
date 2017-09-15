@@ -3,6 +3,13 @@
 
 #include "polygon.hpp"
 
+#define CUBE_EDGE_LENGTH 20.
+#define MAX_ATTEMPTS 50000.
+#define DISKS_NUM 100.
+#define VERTICES_NUMBER 8.
+#define THICKNESS 1.
+#define OUTER_RADIUS 5.
+#define FNAME "1.geo"
 
 Polygon::Polygon(std::vector<Point> vertices) {
     __vertices = vertices;
@@ -28,10 +35,11 @@ bool Polygon::crossesOtherPolygon(Polygon otherPolygon) {
         LineSegment ls = LineSegment(ptBegin, ptEnd);
         if (otherPlane.isCrossedByLineSegment(ls)) {
             Point ptCross = otherPlane.ptCross();
-            if (otherPolygon.containsPoint(ptCross)) {
+            //std::cout << "cross1 " << ptCross.x() << " " << ptCross.y() << " " << ptCross.z() << std::endl;
+            //if (otherPolygon.containsPoint(ptCross)) {
                 flagSelfCrossesOther = true;
                 break;
-            }
+            //}
         }
     }
     if (flagSelfCrossesOther == false)
@@ -46,20 +54,31 @@ bool Polygon::crossesOtherPolygon(Polygon otherPolygon) {
         LineSegment ls = LineSegment(ptBegin, ptEnd);
         if (plane.isCrossedByLineSegment(ls)) {
             Point ptCross = plane.ptCross();
-            if (this->containsPoint(ptCross)) {
+            //std::cout << "cross2 " << ptCross.x() << " " << ptCross.y() << " " << ptCross.z() << std::endl;
+            //if (this->containsPoint(ptCross)) {
                 flagOtherCrossesSelf = true;
                 break;
-            }
+            //}
         }
     }
     if (flagOtherCrossesSelf == false)
         return false;
+    //std::cout << "polygons cross\n";
     return true;
 };
 
 bool Polygon::containsPoint(Point pt) {
-    int s = __vertices.size(), j;
-    float r;
+    int s = __vertices.size(), flag=0;
+    Vector center, otherCenter;
+    for (auto vertex : __vertices)
+        center = center + Vector(vertex.x(), vertex.y(), vertex.z());
+    center = center / s;
+    float l = Vector(Point(center.x(), center.y(), center.z()), pt).length();
+    //std::cout << l << std::endl;
+    if (l < OUTER_RADIUS)
+        return true;
+    else
+        return false;
     /*Point pt0, pt1, pt2;
     for(int i = 0; i < s; ++i) {
         if (i == s - 1) {
@@ -78,22 +97,16 @@ bool Polygon::containsPoint(Point pt) {
             pt2 = __vertices[i + 2];
         }
         Plane pl = Plane(pt0, pt1, pt2);
-        Vector v20 = Vector(pt2, pt0);
-        Vector v21 = Vector(pt2, pt1);
-        Vector v2pt = Vector(pt2, pt);
-        if (v20.vectorMultiply(v21).scalarMultiply(v20.vectorMultiply(v2pt)) < 0)
-            return false;
-    }*/
-    if (s % 2 == 0)
-        j = s / 2;
-    else
-        j = (s + 1) / 2;
-    r = Vector(__vertices[0], __vertices[j]).length();
-    int flag = 1;
-    for(int i = 0; i < s; i++) {
-        if (r < Vector(vertices[i], pt).length())
+        Vector v02 = Vector(pt0, pt2);
+        Vector v01 = Vector(pt0, pt1);
+        Vector v0pt = Vector(pt0, pt);
+        float tmp = v02.vectorMultiply(v01).scalarMultiply(v01.vectorMultiply(v0pt));
+        if (tmp > 0)
+            flag = 1;
     }
-    return true;
+    if (flag == 0)
+        return true;
+    return false;*/
 }; 
 
 bool Polygon::crossesBox(float boxSize) {

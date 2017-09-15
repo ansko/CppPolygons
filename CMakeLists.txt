@@ -21,6 +21,7 @@ set (SOURCES
         src/det.cpp 
         src/line_segment.cpp
 	    src/mainExfoliation.cpp
+        #src/main.cpp
         src/plane.cpp
 	    src/point.cpp
         src/polygon.cpp

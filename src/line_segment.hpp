@@ -12,6 +12,7 @@ public:
     float length();
     Point begin();
     Point end();
+    bool isCrossedByOtherLineSegment(LineSegment otherLs);
 private:
     Point __begin, __end;
 };
