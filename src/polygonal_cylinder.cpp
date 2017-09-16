@@ -17,15 +17,15 @@ PolygonalCylinder::PolygonalCylinder(int verticesNumber, float thickness, float 
         bottomVertices.push_back(Point(outerRadius * cos(centralAngle * i),\
                                        outerRadius * sin(centralAngle * i),\
                                        -thickness / 2));
+        centralVertices.push_back(Point(outerRadius * cos(centralAngle * (i - 1)),\
+                                        outerRadius * sin(centralAngle * (i - 1)),\
+                                        thickness / 2));
         centralVertices.push_back(Point(outerRadius * cos(centralAngle * i),\
                                         outerRadius * sin(centralAngle * i),\
                                         thickness / 2));
         centralVertices.push_back(Point(outerRadius * cos(centralAngle * i),\
                                         outerRadius * sin(centralAngle * i),\
                                         -thickness / 2));
-        centralVertices.push_back(Point(outerRadius * cos(centralAngle * (i - 1)),\
-                                        outerRadius * sin(centralAngle * (i - 1)),\
-                                        thickness / 2));
         centralVertices.push_back(Point(outerRadius * cos(centralAngle * (i - 1)),\
                                         outerRadius * sin(centralAngle * (i - 1)),\
                                         -thickness / 2));
@@ -53,7 +53,8 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
     float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
     float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
 
-    // if they are very close or very far
+    //std::cout << "are very close or very far? ";
+    // if polygonal cylinders are very close or very far
     Point tc = topFacet_ptr->center();
     Point bc = bottomFacet_ptr->center();
     Point otherTc = otherPolygonalCylinder.topFacet().center();
@@ -65,12 +66,35 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
                             otherTc.z() + otherBc.z()) / 2;
     Point otherC(otherVc.x(), otherVc.y(), otherVc.z());
     float centersDistance = Vector(c, otherC).length();
-    float veryCloseDistance = 2 * THICKNESS;
+    float veryCloseDistance = std::min(THICKNESS, 2 * OUTER_RADIUS);
     float veryFarDistance = 2 * pow(pow(OUTER_RADIUS, 2) + pow(THICKNESS/2, 2), 0.5);
-    if (centersDistance > veryFarDistance)
+    if (centersDistance > veryFarDistance) {
+        //std::cout << "surely far\n";
         return false;
-    else if (centersDistance < veryCloseDistance)
+    }
+    else if (centersDistance < veryCloseDistance) {
+        //std::cout << "surely close\n";
         return true;
+    }
+    else {
+        //std::cout << "don't know\n";
+    }
+
+
+    // if main axes of the cylinders lie on far lines
+    // http://en.wikipedia.org/wiki/Skew_lines#Distance_between_two_skew_lines
+    // x = x1 + td1 and x = x2 + td2
+    // d = |(d1 x d2) / |d1 x d2| * (x1 - x2)|
+    Point x1 = bottomFacet_ptr->center();
+    Vector d1(bottomFacet_ptr->center(), topFacet_ptr->center());
+    Point x2 = otherPolygonalCylinder.bottomFacet().center();
+    Vector d2(otherPolygonalCylinder.bottomFacet().center(),\
+              otherPolygonalCylinder.topFacet().center());
+    Vector n = d1.vectorMultiply(d2) / d1.vectorMultiply(d2).length();
+    Vector dx(x1, x2);
+    float d = fabs(n.scalarMultiply(dx));
+    if (d > 2 * OUTER_RADIUS)
+        return false;
 
     // intermediate situation
     std::vector<Polygon> polys, otherPolys;

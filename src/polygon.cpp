@@ -35,15 +35,14 @@ bool Polygon::crossesOtherPolygon(Polygon otherPolygon) {
         LineSegment ls = LineSegment(ptBegin, ptEnd);
         if (otherPlane.isCrossedByLineSegment(ls)) {
             Point ptCross = otherPlane.ptCross();
-            //std::cout << "cross1 " << ptCross.x() << " " << ptCross.y() << " " << ptCross.z() << std::endl;
             if (otherPolygon.containsPoint(ptCross)) {
                 flagSelfCrossesOther = true;
                 break;
             }
         }
     }
-    //if (flagSelfCrossesOther == false)
-    //        return false;
+    if (flagSelfCrossesOther == true)
+            return true;
     for (int i = 0; i < otherVertices.size(); ++i) {
         Point ptBegin = otherVertices[i];
         Point ptEnd;
@@ -54,17 +53,13 @@ bool Polygon::crossesOtherPolygon(Polygon otherPolygon) {
         LineSegment ls = LineSegment(ptBegin, ptEnd);
         if (plane.isCrossedByLineSegment(ls)) {
             Point ptCross = plane.ptCross();
-            //std::cout << "cross2 " << ptCross.x() << " " << ptCross.y() << " " << ptCross.z() << std::endl;
             if (this->containsPoint(ptCross)) {
                 flagOtherCrossesSelf = true;
                 break;
             }
         }
     }
-    //if (flagOtherCrossesSelf == false)
-    //    return false;
-    //std::cout << "polygons cross\n";
-    if (flagSelfCrossesOther or flagOtherCrossesSelf)
+    if (flagOtherCrossesSelf == true)
         return true;
     return false;
 };
@@ -79,12 +74,6 @@ bool Polygon::containsPoint(Point pt) {
     for (auto vertex : __vertices)
         center = center + Vector(vertex.x(), vertex.y(), vertex.z());
     center = center / s;
-    float l = Vector(Point(center.x(), center.y(), center.z()), pt).length();
-    //std::cout << l << std::endl;
-    //if (l < OUTER_RADIUS)
-    //    return true;
-    //else
-    //    return false;
     Point pt0, pt1, pt2;
     for(int i = 0; i < s; ++i) {
         if (i == s - 1) {

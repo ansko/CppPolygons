@@ -27,7 +27,7 @@ public:
 
     Vector vectorMultiply(Vector otherVector);
     float scalarMultiply(Vector otherVector);
-    Vector dot4(std::vector<std::vector<float> > M);
+    Vector dot4(std::vector<std::vector<float> > M); // to translate or rotate by matrix
 private:
     Point __begin, __end;
 };

@@ -111,23 +111,22 @@ bool Plane::isCrossedByLineSegment(LineSegment ls) {
 
     float det1 = determinant(M1, 3);
     float det2 = determinant(M2, 3);
-    if (det1 * det2 < 0) {
-        Vector v3 = Vector(pt3.x(), pt3.y(), pt3.z());
-        Vector v34 = Vector(pt3, pt4);
-        Vector vCross = v3 + v34 * abs(det1) / (abs(det1) + abs(det2));
-        __ptCross = Point(vCross.x(), vCross.y(), vCross.z());
-        //std::cout << "cross1 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
-        return true;
+    if (abs(det1) > 0.000001 && abs(det1) > 0.000001) {
+        if (det1 * det2 < 0) {
+            Vector v3 = Vector(pt3.x(), pt3.y(), pt3.z());
+            Vector v34 = Vector(pt3, pt4);
+            Vector vCross34 = v3 + v34 * abs(det1) / (abs(det1) + abs(det2));
+            __ptCross = Point(vCross34.x(), vCross34.y(), vCross34.z());
+            return true;
+        }
+        return false;
     }
-    else if (det1 == 0) {
-        __ptCross = pt3;
-        //std::cout << "cross2 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
-        return true;
-    }
-    else if (det2 == 0) {
+    else if (abs(det1) > 0.000001) {
         __ptCross = pt4;
-        //std::cout << "cross1 " << __ptCross.x() << " " << __ptCross.y() << " " << __ptCross.z() << std::endl;
         return true;
     }
-    return false;
+    else {
+        __ptCross = pt3;
+        return true;
+    }
 };
