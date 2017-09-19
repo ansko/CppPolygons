@@ -107,10 +107,35 @@ bool Polygon::containsPoint(Point pt) {
 bool Polygon::crossesBox(float boxSize) {
     for (int i = 0; i < __vertices.size(); ++i) {
         auto vertex = __vertices[i];
-        if (vertex.x() < 0 || vertex.y() < 0 || vertex.z() < 0)
-            return true;
-        if (vertex.x() > boxSize || vertex.y() > boxSize || vertex.z() > boxSize)
-            return true;
+        auto vertex2 = Point();
+        if (i == 0)
+            vertex2 = __vertices[__vertices.size() - 1];
+        else
+            vertex2 = __vertices[i - 1];
+        if (vertex.x() < 0 && vertex2.x() > 0)
+            if(vertex.y() > 0 && vertex.y() < boxSize &&
+               vertex.z() > 0 && vertex.z() < boxSize)
+                return true;
+        if (vertex.y() < 0 && vertex2.y() > 0)
+            if(vertex.x() > 0 && vertex.x() < boxSize &&
+               vertex.z() > 0 && vertex.z() < boxSize)
+                return true;
+        if (vertex.z() < 0 && vertex2.z() > 0)
+            if(vertex.x() > 0 && vertex.x() < boxSize &&
+               vertex.y() > 0 && vertex.y() < boxSize)
+                return true;
+        if (vertex.x() > boxSize && vertex2.x() < boxSize)
+            if(vertex.y() > 0 && vertex.y() < boxSize &&
+               vertex.z() > 0 && vertex.z() < boxSize)
+                return true;
+        if (vertex.y() > boxSize && vertex2.y() < boxSize)
+            if(vertex.x() > 0 && vertex.x() < boxSize &&
+               vertex.z() > 0 && vertex.z() < boxSize)
+                return true;
+        if (vertex.z() > boxSize && vertex2.z() < boxSize)
+            if(vertex.x() > 0 && vertex.x() < boxSize &&
+               vertex.y() > 0 && vertex.y() < boxSize)
+                return true;
     }
     return false;
 };

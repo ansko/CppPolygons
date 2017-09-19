@@ -31,8 +31,6 @@ int main(int argc, char **argv) {
     int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
     std::string FNAME = sp.getProperty("FNAME");
 
-    PolygonalCylinder pc(VERTICES_NUMBER, THICKNESS, OUTER_RADIUS);
-
     std::srand(unsigned(std::time(0)));
     while (pcs.size() < DISKS_NUM && attempt < MAX_ATTEMPTS) {
         attempt++;
@@ -42,11 +40,10 @@ int main(int argc, char **argv) {
         float dx = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dy = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dz = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
-        //std::cout << " " << dx << " " << dy << " " << dz << " ";
-        pc.translate(dx, dy, dz);
         pc.rotateAroundX(PI_F * static_cast<float>(rand()) / RAND_MAX);
         pc.rotateAroundY(PI_F * static_cast<float>(rand()) / RAND_MAX);
         pc.rotateAroundZ(PI_F * static_cast<float>(rand()) / RAND_MAX);
+        pc.translate(dx, dy, dz);
         int flag = 0;
         if (pc.crossesBox(CUBE_EDGE_LENGTH))
             flag = 2;
