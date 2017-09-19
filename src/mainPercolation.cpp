@@ -17,7 +17,6 @@
 int main(int argc, char **argv) {
     std::cout << "Start!\n";
     std::vector<PolygonalCylinderInTheShell> pcitss;
-    //std::vector<PolygonalCylinder> pcitss;
     int attempt = 0;
 
 
@@ -39,9 +38,10 @@ int main(int argc, char **argv) {
     while (pcitss.size() - additionalDisksNum < DISKS_NUM && attempt < MAX_ATTEMPTS) {
         attempt++;
         if (attempt % 1 == 0) {
-            std::cout << attempt << " " << pcitss.size() << " \n";
+            std::cout << "Attempt = " << attempt
+                      << " Pcits size = " << pcitss.size()
+                      << " AdditionalDisksNum = " << additionalDisksNum << "\n";
             bool flagPercolation = checkPercolation(pcitss);
-            std::cout << flagPercolation << std::endl;
             if (flagPercolation == true)
                 return 0;
         }
@@ -49,14 +49,22 @@ int main(int argc, char **argv) {
                                           THICKNESS,
                                           OUTER_RADIUS,
                                           SHELL_THICKNESS);
-        //PolygonalCylinder pcits(VERTICES_NUMBER, THICKNESS, OUTER_RADIUS);
         float dx = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dy = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dz = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         pcits.rotateAroundX(PI_F * static_cast<float>(rand()) / RAND_MAX);
         pcits.rotateAroundY(PI_F * static_cast<float>(rand()) / RAND_MAX);
         pcits.rotateAroundZ(PI_F * static_cast<float>(rand()) / RAND_MAX);
-        pcits.translate(dx, dy, dz);
+        pcits.translate(dx, dy, dz); 
+        Point tc = pcits.topFacet().center();
+        Point bc = pcits.bottomFacet().center();
+        Vector vtc = Vector(tc.x(), tc.y(), tc.z());
+        Vector vbc = Vector(bc.x(), bc.y(), bc.z());
+        Vector vc = vtc / 2 + vbc / 2;
+        if (vc.x() < 0 || vc.x() > CUBE_EDGE_LENGTH ||
+            vc.y() < 0 || vc.y() > CUBE_EDGE_LENGTH ||
+            vc.z() < 0 || vc.z() > CUBE_EDGE_LENGTH)
+            continue;
         int flag = 0;
         for(auto& oldPcits : pcitss)
             if (pcits.crossesOtherPolygonalCylinder(oldPcits, 0)) {
@@ -69,19 +77,20 @@ int main(int argc, char **argv) {
                 for(int indexY = -1; indexY < 2; ++indexY)
                     for(int indexZ = -1; indexZ < 2; ++indexZ) {
                         PolygonalCylinderInTheShell pcits1 = pcits;
-                        //PolygonalCylinder pcits1 = pcits;
                         pcits1.translate(CUBE_EDGE_LENGTH * indexX,
                                          CUBE_EDGE_LENGTH * indexY,
                                          CUBE_EDGE_LENGTH * indexZ);
-                        if ((0 < pcits1.topFacet().center().x()  &&
-                             CUBE_EDGE_LENGTH > pcits1.topFacet().center().x() &&
-                             0 < pcits1.topFacet().center().y()  &&
-                             CUBE_EDGE_LENGTH > pcits1.topFacet().center().y() &&
-                             0 < pcits1.topFacet().center().z()  &&
-                             CUBE_EDGE_LENGTH > pcits1.topFacet().center().z()) ||
+                        tc = pcits1.topFacet().center();
+                        bc = pcits1.bottomFacet().center();
+                        vtc = Vector(tc.x(), tc.y(), tc.z());
+                        vbc = Vector(bc.x(), bc.y(), bc.z());
+                        vc = vtc / 2 + vbc / 2;
+                        if ((0 < vc.x()  && CUBE_EDGE_LENGTH > vc.x() &&
+                             0 < vc.y()  && CUBE_EDGE_LENGTH > vc.y() &&
+                             0 < vc.z()  && CUBE_EDGE_LENGTH > vc.z()) ||
                              pcits1.crossesBox(CUBE_EDGE_LENGTH)) {
                                  pcits1.setNumber(currentNumber);
-                                 if (indexX != 0 && indexY != 0 && indexZ != 0)
+                                 if (indexX != 0 || indexY != 0 || indexZ != 0)
                                      ++additionalDisksNum;
                                  pcitss.push_back(pcits1);
                              }
