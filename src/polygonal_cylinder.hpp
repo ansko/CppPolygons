@@ -23,6 +23,7 @@ public:
     void rotateAroundZ(float angle);
     void setName(std::string nameToSet);
     void setNumber(int numberToSet);
+    int getNumber();
 protected:
     std::vector<Polygon> __facets;
     std::shared_ptr<Polygon> topFacet_ptr, bottomFacet_ptr;

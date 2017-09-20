@@ -52,8 +52,10 @@ Polygon PolygonalCylinder::bottomFacet() {
     return *bottomFacet_ptr;
 };
 
-bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPolygonalCylinder,
-                                                      int mode) {
+bool PolygonalCylinder::crossesOtherPolygonalCylinder(
+        PolygonalCylinder otherPolygonalCylinder,
+        int mode
+    ) {
     SettingsParser sp("options.ini");
     sp.parseSettings();
     float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
@@ -94,10 +96,10 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
     float centersDistance = Vector(c, otherC).length();
     float veryCloseDistance = std::min(THICKNESS, 2 * OUTER_RADIUS);
     float veryFarDistance = 2 * pow(pow(OUTER_RADIUS, 2) 
-                              + pow(THICKNESS/2, 2), 0.5);
+                                  + pow(THICKNESS/2, 2), 0.5);
     if (mode == 1) {
         veryCloseDistance += 2 * SHELL_THICKNESS;
-        veryFarDistance += 2 * SHELL_THICKNESS;
+        veryFarDistance += 2 * SHELL_THICKNESS * pow(2, 0.5);
     }
     if (centersDistance > veryFarDistance) {
         return false;
@@ -123,7 +125,7 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
         return false;
 
     // intermediate situation
-    std::vector<Polygon> polys, otherPolys;
+/*    std::vector<Polygon> polys, otherPolys;
     polys.push_back(*topFacet_ptr);
     polys.push_back(*bottomFacet_ptr);
     for (auto facet : __facets)
@@ -137,8 +139,6 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
         for (auto& vertex : poly.vertices()) {
             Vector vcvertex(c, vertex);
             float l = vcvertex.length();
-            if (abs(l - OUTER_RADIUS) < 0.000001)
-                continue;
             float centralAngle = PI_F / poly.vertices().size();
             vcvertex = vcvertex * (l + SHELL_THICKNESS) / l / cos(centralAngle);
             vertex = Point(vcvertex.x(), vcvertex.y(), vcvertex.z());
@@ -149,8 +149,6 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
         for (auto& otherVertex : otherPoly.vertices()) {
             Vector vothercvertex(otherC, otherVertex);
             float l = vothercvertex.length();
-            if (abs(l - OUTER_RADIUS) < 0.000001)
-                continue;
             float centralAngle = PI_F / otherPoly.vertices().size();
             vothercvertex = vothercvertex * 
                            (l + SHELL_THICKNESS) / l / cos(centralAngle);
@@ -163,7 +161,61 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(PolygonalCylinder otherPol
         for (auto otherPoly : otherPolys) {
             if (poly.crossesOtherPolygon(otherPoly))
                 return true;
+        }*/
+    std::vector<Polygon> polys, otherPolys;
+    polys.push_back(*topFacet_ptr);
+    polys.push_back(*bottomFacet_ptr);
+    for (auto facet : __facets)
+        polys.push_back(facet);
+    otherPolys.push_back(otherPolygonalCylinder.topFacet());
+    otherPolys.push_back(otherPolygonalCylinder.bottomFacet());
+    for (auto facet : otherPolygonalCylinder.facets())
+        otherPolys.push_back(facet);
+
+
+    Point pcitsc(tc.x() / 2 + bc.x() / 2,
+                 tc.y() / 2 + bc.y() / 2,
+                 tc.z() / 2 + bc.z() / 2);
+    Vector vpcitsc = Vector(pcitsc.x(), pcitsc.y(), pcitsc.z());
+    Point otherPcitsc(otherTc.x() / 2 + otherBc.x() / 2,
+                      otherTc.y() / 2 + otherBc.y() / 2,
+                      otherTc.z() / 2 + otherBc.z() / 2);
+    Vector votherPcitsc = Vector(otherPcitsc.x(),
+                                 otherPcitsc.y(),
+                                 otherPcitsc.z());
+    for (auto poly : polys) {
+        Point polyc = poly.center();
+        Vector vpcitscpolyc = Vector(pcitsc, polyc);
+        float coeff = (vpcitscpolyc.length()
+                      + SHELL_THICKNESS) / vpcitscpolyc.length();
+        std::vector<Point> pts;
+        for (auto vertex : poly.vertices()) {
+            Vector vpcitscvertex = Vector(pcitsc, vertex);
+            //vpcitscvertex = vpcitscvertex * coeff;
+            Vector vvertex = vpcitsc + vpcitscvertex * coeff;
+            vertex = Point(vvertex.x(), vvertex.y(), vvertex.z());
+            pts.push_back(vertex);
         }
+        poly = Polygon(pts);
+        for (auto otherPoly : otherPolys) {
+            Point otherPolyc = otherPoly.center();
+            Vector othervpcitscpolyc = Vector(otherPcitsc, otherPolyc);
+            float otherCoeff = (vpcitscpolyc.length() + SHELL_THICKNESS) / 
+                               vpcitscpolyc.length();
+            std::vector<Point> otherPts;
+            for (auto vertex : otherPoly.vertices()) {
+                Vector vpcitscvertex = Vector(otherPcitsc, vertex);
+                vpcitscvertex = vpcitscvertex * otherCoeff;
+                Vector vvertex = votherPcitsc + vpcitscvertex;
+                vertex = Point(vvertex.x(), vvertex.y(), vvertex.z());
+                otherPts.push_back(vertex);
+            }
+            otherPoly = Polygon(otherPts);
+            if (poly.crossesOtherPolygon(otherPoly))
+                return true;
+        }
+    }
+
     return false;
 };
 
@@ -177,6 +229,10 @@ bool PolygonalCylinder::crossesBox(float boxSize) {
             return true;
     return false;
 };
+
+int PolygonalCylinder::getNumber() {
+    return number;
+}
 
 void PolygonalCylinder::translate(float dx, float dy, float dz) {
     std::vector<std::vector<float> > M;

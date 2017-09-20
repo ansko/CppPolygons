@@ -286,8 +286,6 @@ void printToCSG(std::string fname,
     std::ofstream fout;
     fout.open(fname);
 
-    std::cout << "pcitss\n";
-
     SettingsParser sp("options.ini");
     sp.parseSettings();
     std::string CUBE_EDGE_LENGTH = sp.getProperty("CUBE_EDGE_LENGTH");

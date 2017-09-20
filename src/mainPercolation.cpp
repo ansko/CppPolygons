@@ -1,5 +1,6 @@
 #include <ctime>
 #include <iostream>
+#include <string>
 
 #include "point.hpp"
 #include "polygon.hpp"
@@ -19,8 +20,7 @@ int main(int argc, char **argv) {
     std::vector<PolygonalCylinderInTheShell> pcitss;
     int attempt = 0;
 
-
-    SettingsParser sp("options.ini");
+    SettingsParser sp("./options.ini");
     sp.parseSettings();
     float CUBE_EDGE_LENGTH = (float)std::stod(sp.getProperty("CUBE_EDGE_LENGTH"));
     int VERTICES_NUMBER = (int)std::stod(sp.getProperty("VERTICES_NUMBER"));
@@ -35,15 +35,18 @@ int main(int argc, char **argv) {
     int additionalDisksNum = 0;
 
     std::srand(unsigned(std::time(0)));
-    while (pcitss.size() - additionalDisksNum < DISKS_NUM && attempt < MAX_ATTEMPTS) {
+    while (pcitss.size() - additionalDisksNum < DISKS_NUM &&
+           attempt < MAX_ATTEMPTS) {
         attempt++;
-        if (attempt % 1 == 0) {
+        if (attempt % 10 == 0) {
             std::cout << "Attempt = " << attempt
                       << " Pcits size = " << pcitss.size()
                       << " AdditionalDisksNum = " << additionalDisksNum << "\n";
-            bool flagPercolation = checkPercolation(pcitss);
-            if (flagPercolation == true)
-                return 0;
+            //bool flagPercolation = checkPercolation(pcitss);
+            //if (flagPercolation == true) {
+            //    std::cout << "Percolation!\n";
+            //    return 0;
+            //}
         }
         PolygonalCylinderInTheShell pcits(VERTICES_NUMBER,
                                           THICKNESS,
@@ -91,16 +94,30 @@ int main(int argc, char **argv) {
                              pcits1.crossesBox(CUBE_EDGE_LENGTH)) {
                                  pcits1.setNumber(currentNumber);
                                  if (indexX != 0 || indexY != 0 || indexZ != 0)
-                                     ++additionalDisksNum;
+                                    ++additionalDisksNum;
                                  pcitss.push_back(pcits1);
-                             }
+                            }
                     }
         }
     }
-    float disksVolume = pcitss.size() * PI_F * pow(OUTER_RADIUS, 2) * THICKNESS;
+    float diskVolume = PI_F * pow(OUTER_RADIUS, 2) * THICKNESS;
+    float disksVolume = (pcitss.size() - additionalDisksNum) * diskVolume;
     std::cout << "volume fraction = "
               << disksVolume / pow(CUBE_EDGE_LENGTH, 3)
               << std::endl;
+    diskVolume = PI_F * pow(OUTER_RADIUS + SHELL_THICKNESS, 2)
+                      * (THICKNESS + 2 * SHELL_THICKNESS);
+    disksVolume = (pcitss.size() - additionalDisksNum) * diskVolume;
+    std::cout << "volume fraction with cell = "
+              << disksVolume / pow(CUBE_EDGE_LENGTH, 3)
+              << std::endl;
+    bool flagPercolation = checkPercolation(pcitss);
+    if (flagPercolation == true)
+        std::cout << "Percolation!\n";
+    else {
+        std::cout << "No percolation\n";
+    }
+    std::cout << pcitss.size() << std::endl;
     printToCSG(FNAME, pcitss, 0);
 
     return 0;

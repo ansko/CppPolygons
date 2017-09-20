@@ -1,5 +1,6 @@
 #include "polygonal_cylinder_in_the_shell.hpp"
 
+float PI_F = 3.14159265358979;
 
 PolygonalCylinderInTheShell::PolygonalCylinderInTheShell(
         int verticesNumber,
@@ -22,6 +23,7 @@ PolygonalCylinderInTheShell::PolygonalCylinderInTheShell(
 
 bool PolygonalCylinderInTheShell::crossesBox(float boxSize) {
     std::vector<Polygon> polygons;
+    float centralAngle = PI_F / __facets.size();
     polygons.push_back(*topFacet_ptr);
     polygons.push_back(*bottomFacet_ptr);
     Point tc = this->topFacet().center();
@@ -41,6 +43,9 @@ bool PolygonalCylinderInTheShell::crossesBox(float boxSize) {
         std::vector<Point> newpolypts;
         for (auto pt : polygon.vertices()) {
             Vector vpt(pt.x(), pt.y(), pt.z());
+            Vector vpopycpt(polygon.center(), pt);
+            l = vpopycpt.length();
+            vpopycpt = vpopycpt * (l + __shellThickness / cos(centralAngle)) / l;
             vpt = vpt + vtoadd;
             pt = Point(vpt.x(), vpt.y(), vpt.z());
             newpolypts.push_back(pt);

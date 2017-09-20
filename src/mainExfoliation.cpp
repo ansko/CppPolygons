@@ -61,7 +61,11 @@ int main(int argc, char **argv) {
         else
         {}
     }
-    std::cout << "volume fraction = " << pcs.size() * PI_F * pow(OUTER_RADIUS, 2) * THICKNESS / pow(CUBE_EDGE_LENGTH, 3) << std::endl;
+    float pcVolume =  PI_F * pow(OUTER_RADIUS, 2) * THICKNESS;
+    float cubeVolume = pow(CUBE_EDGE_LENGTH, 3);
+    std::cout << "volume fraction = "
+              << pcs.size() * pcVolume / cubeVolume
+              << std::endl;
     printToCSG(FNAME, pcs);
 
     return 0;
