@@ -16,19 +16,23 @@ set (HEADERS
 	src/polygonal_cylinder.hpp
     src/vector.hpp
     src/det.hpp
-    src/settings_parser.hpp)
+    src/settings_parser.hpp
+    src/polygonal_cylinder_in_the_shell.hpp)
 
 set (SOURCES
         src/det.cpp 
         src/line_segment.cpp
-	    src/mainExfoliation.cpp
+	    #src/mainExfoliation.cpp
+        src/checkPercolation.cpp
+        src/mainPercolation.cpp
         #src/main.cpp
         src/plane.cpp
 	    src/point.cpp
         src/polygon.cpp
         src/polygonal_cylinder.cpp
         src/vector.cpp
-        src/settings_parser.cpp)
+        src/settings_parser.cpp
+        src/polygonal_cylinder_in_the_shell.cpp)
  
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 
