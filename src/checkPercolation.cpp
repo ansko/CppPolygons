@@ -11,7 +11,7 @@ bool checkPercolation(std::vector<PolygonalCylinderInTheShell> pcitss) {
     for (int i = 0; i < pcitss.size(); ++i) {
         PolygonalCylinderInTheShell pcits = pcitss[i];
         for(int j = i + 1; j < pcitss.size(); ++j) {
-            PolygonalCylinderInTheShell otherPcits = pcitss[j];
+            PolygonalCylinderInTheShell otherPcits = std::move(pcitss[j]);
             if (pcits.crossesOtherPolygonalCylinder(otherPcits, 1)) {
                 std::cout << i << " " << j << std::endl;
                 std::vector<int> crossing;

@@ -104,7 +104,9 @@ bool Polygon::containsPoint(Point pt) {
     return false;
 }; 
 
-bool Polygon::crossesBox(float boxSize) {
+// this implementation is made for percolation case
+// when cell is multiplied 27 times
+/*bool Polygon::crossesBox(float boxSize) {
     for (int i = 0; i < __vertices.size(); ++i) {
         auto vertex = __vertices[i];
         auto vertex2 = Point();
@@ -136,6 +138,21 @@ bool Polygon::crossesBox(float boxSize) {
             if(vertex.x() > 0 && vertex.x() < boxSize &&
                vertex.y() > 0 && vertex.y() < boxSize)
                 return true;
+    }
+    return false;
+};*/
+
+
+// this implementation is made for all other cases
+bool Polygon::crossesBox(float boxSize) {
+    for (int i = 0; i < __vertices.size(); ++i) {
+        auto vertex = __vertices[i];
+        if (vertex.x() < 0 || vertex.x() > boxSize)
+            return true;
+        if (vertex.y() < 0 || vertex.y() > boxSize)
+            return true;
+        if (vertex.z() < 0 || vertex.z() > boxSize)
+            return true;
     }
     return false;
 };
