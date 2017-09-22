@@ -165,11 +165,11 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     std::vector<Polygon> polys, otherPolys;
     polys.push_back(*topFacet_ptr);
     polys.push_back(*bottomFacet_ptr);
-    for (auto facet : __facets)
+    for (auto& facet : __facets)
         polys.push_back(facet);
     otherPolys.push_back(otherPolygonalCylinder.topFacet());
     otherPolys.push_back(otherPolygonalCylinder.bottomFacet());
-    for (auto facet : otherPolygonalCylinder.facets())
+    for (auto& facet : otherPolygonalCylinder.facets())
         otherPolys.push_back(facet);
 
 
@@ -183,13 +183,13 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     Vector votherPcitsc = Vector(otherPcitsc.x(),
                                  otherPcitsc.y(),
                                  otherPcitsc.z());
-    for (auto poly : polys) {
+    for (auto& poly : polys) {
         Point polyc = poly.center();
         Vector vpcitscpolyc = Vector(pcitsc, polyc);
         float coeff = (vpcitscpolyc.length()
                       + SHELL_THICKNESS) / vpcitscpolyc.length();
         std::vector<Point> pts;
-        for (auto vertex : poly.vertices()) {
+        for (auto& vertex : poly.vertices()) {
             Vector vpcitscvertex = Vector(pcitsc, vertex);
             //vpcitscvertex = vpcitscvertex * coeff;
             Vector vvertex = vpcitsc + vpcitscvertex * coeff;
@@ -197,13 +197,13 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
             pts.push_back(vertex);
         }
         poly = Polygon(pts);
-        for (auto otherPoly : otherPolys) {
+        for (auto& otherPoly : otherPolys) {
             Point otherPolyc = otherPoly.center();
             Vector othervpcitscpolyc = Vector(otherPcitsc, otherPolyc);
             float otherCoeff = (vpcitscpolyc.length() + SHELL_THICKNESS) / 
                                vpcitscpolyc.length();
             std::vector<Point> otherPts;
-            for (auto vertex : otherPoly.vertices()) {
+            for (auto& vertex : otherPoly.vertices()) {
                 Vector vpcitscvertex = Vector(otherPcitsc, vertex);
                 vpcitscvertex = vpcitscvertex * otherCoeff;
                 Vector vvertex = votherPcitsc + vpcitscvertex;

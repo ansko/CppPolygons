@@ -65,10 +65,11 @@ int main(int argc, char **argv) {
             tacs.push_back(tac);
     }
     float circle = PI_F * OUTER_RADIUS * OUTER_RADIUS;
-    float tacVolume = (STACK_NUMBER * THICKNESS + 
-                      (STACK_NUMBER - 1) * INTERLAYER_SPACE +
-                      2 * SHELL_THICKNESS) * circle;
-    float tacsVolume = DISKS_NUM / STACK_NUMBER * tacVolume;
+    float tacVolume = STACK_NUMBER * THICKNESS * circle;
+                      //(STACK_NUMBER * THICKNESS + 
+                      //(STACK_NUMBER - 1) * INTERLAYER_SPACE +
+                      //2 * SHELL_THICKNESS) * circle;
+    float tacsVolume = tacs.size() * tacVolume;
     float boxVolume = pow(CUBE_EDGE_LENGTH, 3);
     std::cout << "Tactoid system generated with volume fraction "
               << tacsVolume / boxVolume
@@ -82,13 +83,20 @@ int main(int argc, char **argv) {
         pcs.reserve(pcs.size() + pcsTmp_ptr->size());
         pcs.insert(pcs.end(), pcsTmp_ptr->begin(), pcsTmp_ptr->end());
     }
-    std::cout << "1\n";
 
-    float smallDistance = 0.01 * CUBE_EDGE_LENGTH;
-    float smallAngleX = 0.01 * 2 * PI_F;
-    float smallAngleY = 0.01 * 2 * PI_F;
-    float smallAngleZ = 0.01 * 2 * PI_F;
-    for (int i = 0; i < STEPS_NUM; ++i) {
+    if (pcs.size() != 0)
+        printToCSG("Start.geo", pcs);
+    else
+        return 0;
+
+
+    float coeffDist = 0.1;
+    float coeffAngle = 10.;
+    float smallDistance = coeffDist * CUBE_EDGE_LENGTH;
+    float smallAngleX = coeffAngle * 2 * PI_F;
+    float smallAngleY = coeffAngle * 2 * PI_F;
+    float smallAngleZ = coeffAngle * 2 * PI_F;
+    for (int i = 1; i <= STEPS_NUM; ++i) {
         std::cout << "Blending, step " << i << std::endl;
         for (int j = 0; j < pcs.size(); j++) {
             PolygonalCylinder pc = pcs[j];
@@ -96,11 +104,11 @@ int main(int argc, char **argv) {
             float dy = static_cast<float>(2 * rand() - RAND_MAX) / RAND_MAX * smallDistance;
             float dz = static_cast<float>(2 * rand() - RAND_MAX) / RAND_MAX * smallDistance;
             float angle = (2 * rand() - RAND_MAX) / RAND_MAX * smallAngleX;
-            pc.rotateAroundX(angle);
+            pc.rotateAroundX(0.01);
             angle = (2 * rand() - RAND_MAX) / RAND_MAX * smallAngleY;
-            pc.rotateAroundY(angle);
+            pc.rotateAroundY(0.01);
             angle = (2 * rand() - RAND_MAX) / RAND_MAX * smallAngleZ;
-            pc.rotateAroundZ(angle);
+            pc.rotateAroundZ(0.01);
             pc.translate(dx, dy, dz);
             int flagPcPcIntersection = 0;
             int flagPcBoxIntersection = 0;
@@ -116,7 +124,7 @@ int main(int argc, char **argv) {
             if (flagPcPcIntersection == 0 && flagPcBoxIntersection == 0)
                 pcs[j] = pc;
         }
-        if (i % 10 == 0) {
+        if (i % std::min((int)(STEPS_NUM / 10), int(coeffDist / 0.01)) == 0) {
             std::string stringNum = std::to_string(i);
             stringNum = stringNum + ".geo";
             printToCSG(stringNum, pcs);

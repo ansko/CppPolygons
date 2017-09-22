@@ -1,4 +1,5 @@
 #include "tactoid.hpp"
+#include "settings_parser.hpp"
 
 
 Tactoid::Tactoid(int stackNumber, float interlayerSpace, float layerThickness) {
@@ -63,11 +64,21 @@ void Tactoid::rotateAroundZ(float angle) {
 
 
 bool Tactoid::crossesOtherTac(Tactoid otherTac) {
-    for (auto& pc : this->getPcs(0))
-        for (auto& otherPc : otherTac.getPcs(0)) {
-            if (pc.crossesOtherPolygonalCylinder(otherPc, 0))
-                return true;
-        }
+    //for (auto& pc : this->getPcs(0))
+    //    for (auto& otherPc : otherTac.getPcs(0)) {
+    //        if (pc.crossesOtherPolygonalCylinder(otherPc, 0))
+    //            return true;
+    //    }
+
+// coarse implementation, should use big displacements in blending
+    SettingsParser sp("options.ini");
+    sp.parseSettings();
+    int STACK_NUMBER = (int)std::stod(sp.getProperty("STACK_NUMBER"));
+    STACK_NUMBER = STACK_NUMBER / 2;
+    auto pc = this->getPcs(0)[STACK_NUMBER];
+    auto otherPc = otherTac.getPcs(0)[STACK_NUMBER];
+    return pc.crossesOtherPolygonalCylinder(otherPc, 0);
+//
     return false;
 }
 
