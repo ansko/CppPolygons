@@ -17,6 +17,7 @@ set (HEADERS
     src/vector.hpp
     src/det.hpp
     src/settings_parser.hpp
+    src/tactoid.hpp
     src/polygonal_cylinder_in_the_shell.hpp)
 
 set (SOURCES
@@ -24,8 +25,10 @@ set (SOURCES
         src/line_segment.cpp
 	    #src/mainExfoliation.cpp
         src/checkPercolation.cpp
-        src/mainPercolation.cpp
+        #src/mainPercolation.cpp
         #src/main.cpp
+        src/mainFromTactoid.cpp
+        src/tactoid.cpp
         src/plane.cpp
 	    src/point.cpp
         src/polygon.cpp

@@ -11,7 +11,6 @@ public:
         float outerRadius,
         float shellThickness
     );
-    //PolygonalCylinderInTheShell(PolygonalCylinder pc);
     bool crossesBox(float boxSize) override;
 protected:
     float __shellThickness;
