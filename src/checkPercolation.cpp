@@ -56,7 +56,7 @@ bool checkPercolation(std::vector<PolygonalCylinderInTheShell> pcitss) {
                   << crossing[1] << " " 
                   << crossing[2] << std::endl;
 
-    std::cout << "\n----------\n";
+    std::cout << "----------\n";
 
     vtoPop.clear();
     std::vector<std::vector<int> > chains;
@@ -91,12 +91,13 @@ bool checkPercolation(std::vector<PolygonalCylinderInTheShell> pcitss) {
             //std::cout << el << " " << pcitss[el].getNumber() << std::endl;
             std::cout << el << " ";
         std::cout << std::endl;
-        int startSize = chain.size();
         std::set<int> schain(chain.begin(), chain.end());
-        int endSize = schain.size();
+        int startSize = schain.size();
         chain.clear();
         for (auto el : schain)
             chain.push_back(pcitss[el].getNumber());
+        std::set<int> sschain(chain.begin(), chain.end());
+        int endSize = sschain.size();
         std::sort(chain.begin(), chain.end());
         std::cout << "----\n";
         std::cout << "chain after removing the same numbers\n";

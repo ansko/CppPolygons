@@ -76,6 +76,7 @@ int main(int argc, char **argv) {
             }
         if (flag == 0) {
             currentNumber++;
+            int flag2 = 0;
             for(int indexX = -1; indexX < 2; ++indexX)
                 for(int indexY = -1; indexY < 2; ++indexY)
                     for(int indexZ = -1; indexZ < 2; ++indexZ) {
@@ -83,21 +84,35 @@ int main(int argc, char **argv) {
                         pcits1.translate(CUBE_EDGE_LENGTH * indexX,
                                          CUBE_EDGE_LENGTH * indexY,
                                          CUBE_EDGE_LENGTH * indexZ);
-                        tc = pcits1.topFacet().center();
-                        bc = pcits1.bottomFacet().center();
-                        vtc = Vector(tc.x(), tc.y(), tc.z());
-                        vbc = Vector(bc.x(), bc.y(), bc.z());
-                        vc = vtc / 2 + vbc / 2;
-                        if ((0 < vc.x()  && CUBE_EDGE_LENGTH > vc.x() &&
-                             0 < vc.y()  && CUBE_EDGE_LENGTH > vc.y() &&
-                             0 < vc.z()  && CUBE_EDGE_LENGTH > vc.z()) ||
-                             pcits1.crossesBox(CUBE_EDGE_LENGTH)) {
-                                 pcits1.setNumber(currentNumber);
-                                 if (indexX != 0 || indexY != 0 || indexZ != 0)
-                                    ++additionalDisksNum;
-                                 pcitss.push_back(pcits1);
+                        for (auto& oldPcits : pcitss)
+                            if (pcits1.crossesOtherPolygonalCylinder(oldPcits, 0)) {
+                                flag2 = 1;
+                                break;
                             }
                     }
+            if (flag2 == 0) 
+                for(int indexX = -1; indexX < 2; ++indexX)
+                    for(int indexY = -1; indexY < 2; ++indexY)
+                        for(int indexZ = -1; indexZ < 2; ++indexZ) {
+                            PolygonalCylinderInTheShell pcits1 = pcits;
+                            pcits1.translate(CUBE_EDGE_LENGTH * indexX,
+                                             CUBE_EDGE_LENGTH * indexY,
+                                             CUBE_EDGE_LENGTH * indexZ);
+                            tc = pcits1.topFacet().center();
+                            bc = pcits1.bottomFacet().center();
+                            vtc = Vector(tc.x(), tc.y(), tc.z());
+                            vbc = Vector(bc.x(), bc.y(), bc.z());
+                            vc = vtc / 2 + vbc / 2;
+                            if ((0 < vc.x()  && CUBE_EDGE_LENGTH > vc.x() &&
+                                 0 < vc.y()  && CUBE_EDGE_LENGTH > vc.y() &&
+                                 0 < vc.z()  && CUBE_EDGE_LENGTH > vc.z()) ||
+                                 pcits1.crossesBox(CUBE_EDGE_LENGTH)) {
+                                     pcits1.setNumber(currentNumber);
+                                     if (indexX != 0 || indexY != 0 || indexZ != 0)
+                                        ++additionalDisksNum;
+                                     pcitss.push_back(pcits1);
+                                }
+                        }
         }
     }
     float diskVolume = PI_F * pow(OUTER_RADIUS, 2) * THICKNESS;
