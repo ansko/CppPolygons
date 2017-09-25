@@ -82,8 +82,40 @@ bool Plane::isCrossedByLineSegment(LineSegment ls) {
     Vector v02 = Vector(pt0, pt2);
     Vector v03 = Vector(pt0, pt3);
     Vector v04 = Vector(pt0, pt4);
-    std::vector<std::vector<float> > M1, M2;
+ //   std::vector<std::vector<float> > M, M1, M2;
+    std::array<std::array<float, 3>, 3> M1, M2;
+ //   std::vector<std::vector<float> > M = new std::vector<std::vector<float> >;
     std::vector<float> s;
+//
+//    M1.reserve(9);
+//    M1[0].reserve(3);
+//    M1[1].reserve(3);
+//    M1[2].reserve(3);
+    M1[0][0] = v01.x();
+    M1[0][1] = v01.y();
+    M1[0][2] = v01.z();
+    M1[1][0] = v02.x();
+    M1[1][1] = v02.y();
+    M1[1][2] = v02.z();
+    M1[2][0] = v03.x();
+    M1[2][1] = v03.y();
+    M1[2][2] = v03.z();
+
+//    M2.reserve(9);
+//    M2[0].reserve(3);
+//    M2[1].reserve(3);
+//    M2[2].reserve(3);
+    M2[0][0] = v01.x();
+    M2[0][1] = v01.y();
+    M2[0][2] = v01.z();
+    M2[1][0] = v02.x();
+    M2[1][1] = v02.y();
+    M2[1][2] = v02.z();
+    M2[2][0] = v04.x();
+    M2[2][1] = v04.y();
+    M2[2][2] = v04.z();
+//
+/*
     M1.push_back(s);
     M1.push_back(s);
     M1.push_back(s);
@@ -108,7 +140,7 @@ bool Plane::isCrossedByLineSegment(LineSegment ls) {
     M2[2].push_back(v04.x());
     M2[2].push_back(v04.y());
     M2[2].push_back(v04.z());
-
+*/
     float det1 = determinant(M1, 3);
     float det2 = determinant(M2, 3);
     if (abs(det1) > 0.000001 && abs(det1) > 0.000001) {

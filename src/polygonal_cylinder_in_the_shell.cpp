@@ -15,12 +15,6 @@ PolygonalCylinderInTheShell::PolygonalCylinderInTheShell(
     __shellThickness = shellThickness;
 };
 
-/*PolygonalCylinderInTheShell::PolygonalCylinderInTheShell(PolygonalCylinder pc) {
-   // __facets = pc.facets();
-   // topFacet_ptr = pc.topFacet();
-   // bottomFacet_ptr = pc.bottomFacet();
-};*/
-
 bool PolygonalCylinderInTheShell::crossesBox(float boxSize) {
     std::vector<Polygon> polygons;
     float centralAngle = PI_F / __facets.size();

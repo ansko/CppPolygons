@@ -58,9 +58,12 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     ) {
     SettingsParser sp("options.ini");
     sp.parseSettings();
-    float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
-    float SHELL_THICKNESS = (float)std::stod(sp.getProperty("SHELL_THICKNESS"));
-    float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+    //float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
+    //float SHELL_THICKNESS = (float)std::stod(sp.getProperty("SHELL_THICKNESS"));
+    //float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+    float THICKNESS = 0.07;
+    float SHELL_THICKNESS = 0.0;
+    float OUTER_RADIUS = 7.0;
 
     // if polygonal cylinders are very close or very far
     Point tc = topFacet_ptr->center();
@@ -124,44 +127,6 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     if (d > 2 * OUTER_RADIUS + 2 * SHELL_THICKNESS)
         return false;
 
-    // intermediate situation
-/*    std::vector<Polygon> polys, otherPolys;
-    polys.push_back(*topFacet_ptr);
-    polys.push_back(*bottomFacet_ptr);
-    for (auto facet : __facets)
-        polys.push_back(facet);
-    otherPolys.push_back(otherPolygonalCylinder.topFacet());
-    otherPolys.push_back(otherPolygonalCylinder.bottomFacet());
-    for (auto facet : otherPolygonalCylinder.facets())
-        otherPolys.push_back(facet);
-    for (auto poly : polys) {
-        c = poly.center();
-        for (auto& vertex : poly.vertices()) {
-            Vector vcvertex(c, vertex);
-            float l = vcvertex.length();
-            float centralAngle = PI_F / poly.vertices().size();
-            vcvertex = vcvertex * (l + SHELL_THICKNESS) / l / cos(centralAngle);
-            vertex = Point(vcvertex.x(), vcvertex.y(), vcvertex.z());
-        }
-    }
-    for (auto otherPoly : otherPolys) {
-        otherC = otherPoly.center();
-        for (auto& otherVertex : otherPoly.vertices()) {
-            Vector vothercvertex(otherC, otherVertex);
-            float l = vothercvertex.length();
-            float centralAngle = PI_F / otherPoly.vertices().size();
-            vothercvertex = vothercvertex * 
-                           (l + SHELL_THICKNESS) / l / cos(centralAngle);
-            otherVertex = Point(vothercvertex.x(),
-                                vothercvertex.y(),
-                                vothercvertex.z());
-        }
-    }
-    for (auto poly : polys)
-        for (auto otherPoly : otherPolys) {
-            if (poly.crossesOtherPolygon(otherPoly))
-                return true;
-        }*/
     std::vector<Polygon> polys, otherPolys;
     polys.push_back(*topFacet_ptr);
     polys.push_back(*bottomFacet_ptr);

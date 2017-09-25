@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "line_segment.hpp"
 #include "point.hpp"
 #include "vector.hpp"
