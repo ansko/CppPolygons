@@ -24,10 +24,11 @@ set (SOURCES
         src/det.cpp 
         src/line_segment.cpp
 	    #src/mainExfoliation.cpp
-        src/checkPercolation.cpp
+	    src/mainExfoliation2.cpp
+        #src/checkPercolation.cpp
         #src/mainPercolation.cpp
         #src/main.cpp
-        src/mainFromTactoid.cpp
+        #src/mainFromTactoid.cpp
         src/tactoid.cpp
         src/plane.cpp
 	    src/point.cpp
