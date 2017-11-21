@@ -6,7 +6,7 @@
 #include "tactoid.hpp"
 #include "settings_parser.hpp"
 
-#include "printToCSG.cpp"
+#include "printToCSGCircles.cpp"
 
 //float PI_F = 3.14159265358979
 
@@ -26,6 +26,10 @@ int main(int argc, char **argv) {
     int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
     int STEPS_NUM = (int)std::stod(sp.getProperty("STEPS_NUM"));
     std::string FNAME = sp.getProperty("FNAME");
+
+    float verticesNumber = VERTICES_NUMBER;
+    float edgeLength = OUTER_RADIUS * 2  * sin(2 * PI_F / verticesNumber);
+    float innerRadius = edgeLength / 2 / tan(PI_F / verticesNumber);
 
     // Generating initial state
     int attempt = 0;
@@ -47,11 +51,11 @@ int main(int argc, char **argv) {
         float dx = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dy = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dz = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
-        float angle =  static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
+        float angle = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         tac.rotateAroundX(angle);
-        angle =  static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
+        angle = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         tac.rotateAroundY(angle);
-        angle =  static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
+        angle = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         tac.rotateAroundZ(angle);
         tac.translate(dx, dy, dz);
         int flagTacTacIntersection = 0;
@@ -64,7 +68,7 @@ int main(int argc, char **argv) {
         if (flagTacTacIntersection == 0 && flagTacBoxIntersection == 0)
             tacs.push_back(tac);
     }
-    float circle = PI_F * OUTER_RADIUS * OUTER_RADIUS;
+    float circle = PI_F * innerRadius * innerRadius;
     float tacVolume = STACK_NUMBER * THICKNESS * circle;
                       //(STACK_NUMBER * THICKNESS + 
                       //(STACK_NUMBER - 1) * INTERLAYER_SPACE +
@@ -75,7 +79,6 @@ int main(int argc, char **argv) {
               << tacsVolume / boxVolume
               << std::endl;
 
-    // simulation of blending
     std::vector<PolygonalCylinder> pcs;
     for (auto& tac : tacs) {
         std::shared_ptr<std::vector<PolygonalCylinder> > pcsTmp_ptr = 
@@ -83,13 +86,12 @@ int main(int argc, char **argv) {
         pcs.reserve(pcs.size() + pcsTmp_ptr->size());
         pcs.insert(pcs.end(), pcsTmp_ptr->begin(), pcsTmp_ptr->end());
     }
-
     if (pcs.size() != 0)
-        printToCSG("Start.geo", pcs);
+        printToCSGAsCircleCylinders("Start.geo", pcs);
     else
         return 0;
 
-
+    // simulation of blending
     float coeffDist = 0.1;
     float coeffAngle = 10.;
     float smallDistance = coeffDist * CUBE_EDGE_LENGTH;
@@ -124,13 +126,12 @@ int main(int argc, char **argv) {
             if (flagPcPcIntersection == 0 && flagPcBoxIntersection == 0)
                 pcs[j] = pc;
         }
-        if (i % std::min((int)(STEPS_NUM / 10), int(coeffDist / 0.01)) == 0) {
+        //if (i % std::min((int)(STEPS_NUM / 10), int(coeffDist / 0.01)) == 0) {
+        if (1) {
             std::string stringNum = std::to_string(i);
             stringNum = stringNum + ".geo";
-            printToCSG(stringNum, pcs);
+            printToCSGAsCircleCylinders(stringNum, pcs);
         }
     }
-    // Outputing final configuration
-    //printToCSG(FNAME, pcs);
     return 0;
 }

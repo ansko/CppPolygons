@@ -58,12 +58,12 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     ) {
     SettingsParser sp("options.ini");
     sp.parseSettings();
-    //float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
-    //float SHELL_THICKNESS = (float)std::stod(sp.getProperty("SHELL_THICKNESS"));
-    //float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
-    float THICKNESS = 0.07;
-    float SHELL_THICKNESS = 0.0;
-    float OUTER_RADIUS = 7.0;
+    float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
+    float SHELL_THICKNESS = (float)std::stod(sp.getProperty("SHELL_THICKNESS"));
+    float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+    //float THICKNESS = 0.07;
+    //float SHELL_THICKNESS = 0.0;
+    //float OUTER_RADIUS = 7.0;
 
     // if polygonal cylinders are very close or very far
     Point tc = topFacet_ptr->center();
