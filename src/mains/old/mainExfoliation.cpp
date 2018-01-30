@@ -6,7 +6,7 @@
 
 #include "point.hpp"
 #include "polygon.hpp"
-#include "polygonal_cylinder.hpp"
+#include "polygonal_cylinder_in_the_shell.hpp"
 #include "vector.hpp"
 
 #include "printToCSG.cpp"
@@ -17,7 +17,7 @@ const float  PI_F = 3.14159265358979f;
 
 int main(int argc, char **argv) {
     std::cout << "Start!\n";
-    std::vector<PolygonalCylinder> pcs;
+    std::vector<PolygonalCylinderInTheShell> pcs;
     int attempt = 0;
 
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
         attempt++;
         if (attempt % 1000 == 0)
             std::cout << attempt << " " << pcs.size() << " \n";
-        PolygonalCylinder pc(VERTICES_NUMBER, THICKNESS, OUTER_RADIUS);
+        PolygonalCylinderInTheShell pc(VERTICES_NUMBER, THICKNESS, OUTER_RADIUS);
         float dx = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dy = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;
         float dz = static_cast<float>(rand()) / RAND_MAX * CUBE_EDGE_LENGTH;

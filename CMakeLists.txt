@@ -31,7 +31,10 @@ set (SOURCES
         src/vector.cpp
         src/settings_parser.cpp
         src/polygonal_cylinder_in_the_shell.cpp
-        src/mains/test.cpp)
+       # just one of these!
+       # src/mains/main_exfoliated.cpp
+        src/mains/main_exfoliated_interface.cpp)
+       # src/mains/main_exfoliated_shell.cpp)
  
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 
