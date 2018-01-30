@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6) 
  
-set (PROJECT cpp_polygons) 
+set (PROJECT polygonal) 
  
 project (${PROJECT}) 
 
@@ -23,11 +23,6 @@ set (HEADERS
 set (SOURCES
         src/det.cpp 
         src/line_segment.cpp
-	    #src/mainExfoliation.cpp
-        src/checkPercolation.cpp
-        #src/mainPercolation.cpp
-        #src/main.cpp
-        src/mainFromTactoid.cpp
         src/tactoid.cpp
         src/plane.cpp
 	    src/point.cpp
@@ -35,7 +30,11 @@ set (SOURCES
         src/polygonal_cylinder.cpp
         src/vector.cpp
         src/settings_parser.cpp
-        src/polygonal_cylinder_in_the_shell.cpp)
+        src/polygonal_cylinder_in_the_shell.cpp
+       # just one of these!
+       # src/mains/main_exfoliated.cpp
+        src/mains/main_exfoliated_interface.cpp)
+       # src/mains/main_exfoliated_shell.cpp)
  
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 
