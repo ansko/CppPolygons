@@ -38,7 +38,19 @@ PolygonalCylinder::PolygonalCylinder(
     }
     topFacet_ptr = std::make_shared<Polygon>(Polygon(topVertices));
     bottomFacet_ptr = std::make_shared<Polygon>(Polygon(bottomVertices));
+    tfc = Point(0, 0, thickness / 2);
+    bfc = Point(0, 0, -thickness / 2);
 };
+
+
+Point PolygonalCylinder::getTfc() {
+    return this->tfc;
+}
+
+Point PolygonalCylinder::getBfc() {
+    return this->bfc;
+}
+
 
 std::vector<Polygon> PolygonalCylinder::facets() {
     return __facets;
@@ -242,6 +254,13 @@ void PolygonalCylinder::translate(float dx, float dy, float dz) {
     __facets.clear();
     for (int i = 2; i < polygons.size(); ++i)
         __facets.push_back(polygons[i]);
+
+            Vector v(tfc.x(), tfc.y(), tfc.z());
+            v = v.dot4(M);
+            tfc = Point(v.x(), v.y(), v.z());
+            v = Vector(bfc.x(), bfc.y(), bfc.z());
+            v = v.dot4(M);
+            bfc = Point(v.x(), v.y(), v.z());
 };
 
 void PolygonalCylinder::rotateAroundX(float angle) {
@@ -287,6 +306,13 @@ void PolygonalCylinder::rotateAroundX(float angle) {
     __facets.clear();
     for (int i = 2; i < polygons.size(); ++i)
         __facets.push_back(polygons[i]);
+
+            Vector v(tfc.x(), tfc.y(), tfc.z());
+            v = v.dot4(M);
+            tfc = Point(v.x(), v.y(), v.z());
+            v = Vector(bfc.x(), bfc.y(), bfc.z());
+            v = v.dot4(M);
+            bfc = Point(v.x(), v.y(), v.z());
 };
 
 void PolygonalCylinder::rotateAroundY(float angle) {
@@ -332,6 +358,13 @@ void PolygonalCylinder::rotateAroundY(float angle) {
     __facets.clear();
     for (int i = 2; i < polygons.size(); ++i)
         __facets.push_back(polygons[i]);
+
+            Vector v(tfc.x(), tfc.y(), tfc.z());
+            v = v.dot4(M);
+            tfc = Point(v.x(), v.y(), v.z());
+            v = Vector(bfc.x(), bfc.y(), bfc.z());
+            v = v.dot4(M);
+            bfc = Point(v.x(), v.y(), v.z());
 };
 
 void PolygonalCylinder::rotateAroundZ(float angle) {
@@ -377,6 +410,13 @@ void PolygonalCylinder::rotateAroundZ(float angle) {
     __facets.clear();
     for (int i = 2; i < polygons.size(); ++i)
         __facets.push_back(polygons[i]);
+
+            Vector v(tfc.x(), tfc.y(), tfc.z());
+            v = v.dot4(M);
+            tfc = Point(v.x(), v.y(), v.z());
+            v = Vector(bfc.x(), bfc.y(), bfc.z());
+            v = v.dot4(M);
+            bfc = Point(v.x(), v.y(), v.z());
 };
 
 
