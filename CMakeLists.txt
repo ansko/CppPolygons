@@ -18,23 +18,26 @@ set (HEADERS
     src/det.hpp
     src/settings_parser.hpp
     src/tactoid.hpp
-    src/polygonal_cylinder_in_the_shell.hpp)
+    src/polygonal_cylinder_in_the_shell.hpp
+    src/percolation/percolation_checker.cpp)
 
 set (SOURCES
-        src/det.cpp 
-        src/line_segment.cpp
-        src/tactoid.cpp
-        src/plane.cpp
-	    src/point.cpp
-        src/polygon.cpp
-        src/polygonal_cylinder.cpp
-        src/vector.cpp
-        src/settings_parser.cpp
-        src/polygonal_cylinder_in_the_shell.cpp
-       # just one of these!
-       # src/mains/main_exfoliated.cpp
-        src/mains/main_exfoliated_interface.cpp)
-       # src/mains/main_exfoliated_shell.cpp)
+    src/det.cpp 
+    src/line_segment.cpp
+    src/tactoid.cpp
+    src/plane.cpp
+    src/point.cpp
+    src/polygon.cpp
+    src/polygonal_cylinder.cpp
+    src/vector.cpp
+    src/settings_parser.cpp
+    src/polygonal_cylinder_in_the_shell.cpp
+    src/percolation/percolation_checker.cpp
+   # just one of these!
+   # src/mains/main_exfoliated.cpp
+   # src/mains/main_exfoliated_interface.cpp)
+   # src/mains/main_exfoliated_shell.cpp)
+    src/mains/main_exfoliated_interface_percolation.cpp)
  
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 

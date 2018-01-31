@@ -26,11 +26,11 @@ void printToCSGAsCircleCylindersShells(std::string fname,
     std::string THICKNESS = sp.getProperty("THICKNESS");
     float sh = std::stof(sp.getProperty("SHELL_THICKNESS"));
     std::string OUTER_RADIUS = sp.getProperty("OUTER_RADIUS");
-    float edgeLength = (float)std::stod(OUTER_RADIUS) * 2  * sin(2 * PI_F / verticesNumber);
+    float edgeLength = (float)std::stod(OUTER_RADIUS) * 2  * sin(PI_F / verticesNumber);
     float innerRadius = edgeLength / 2 / tan(PI_F / verticesNumber);
 
     std::string fillerString = "solid filler = polygonalCylinder0";
-    std::string shellsString = "solid interface = pc0";
+    std::string shellsString = "solid shells = pc0";
     fout << "algebraic3d\n";
     fout << "solid cell = orthobrick(0, 0, 0; ";
     fout << CUBE_EDGE_LENGTH << ", "\
@@ -79,11 +79,12 @@ void printToCSGAsCircleCylindersShells(std::string fname,
                 shellsString += " or pc" + std::to_string(i);
         }
     }
-    fout << fillerString << ";" << std::endl;
-    fout << shellsString << " and not filler;" << std::endl;
+    fout << fillerString << " and cell;" << std::endl;
+    fout << shellsString << " and cell;" << std::endl;
     fout << "tlo filler;\n";
+    fout << "solid interface = shells and not filler and cell;\n";
     fout << "tlo interface -transparent;\n";
-    fout << "solid matrix = cell and not filler;\n";
+    fout << "solid matrix = not shells and cell;\n";
     fout << "tlo matrix -transparent;\n";    
     fout.close();
     return;

@@ -49,7 +49,10 @@ int main(int argc, char **argv)
     int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
     std::string FNAME = sp.getProperty("FNAME");
 
-    float r = R / 2; // for triangles. this is a very bad practice!
+    float edgeLength = R * 2  * sin(PI_F / n);
+    float innerRadius = edgeLength / 2 / tan(PI_F / n);
+   // float r = R / 2; // for triangles. this is a very bad practice!
+    float r = innerRadius;
 
     std::cout << "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
               << "number of filler particles = " << N << std::endl
@@ -106,9 +109,14 @@ int main(int argc, char **argv)
     std::cout << std::endl;
 
     float pcVolume =  PI_F * pow(r, 2) * h;
+    float shVolume =  PI_F * pow(r + sh, 2) * (h + 2 * sh);
     float cubeVolume = pow(cubeSize, 3);
-    std::cout << "volume fraction = "
+    std::cout << "volume fraction of filler = "
               << polCyls.size() * pcVolume / cubeVolume
+              << "\nvolume fraction of interface = "
+              << polCyls.size() * (shVolume - pcVolume) / cubeVolume
+              << "\nvolume fraction of not-matrix = "
+              << polCyls.size() * shVolume / cubeVolume
               << std::endl;
     printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
 
