@@ -24,10 +24,15 @@ public:
     void setName(std::string nameToSet);
     void setNumber(int numberToSet);
     int getNumber();
+    Point getTfc();
+    Point getBfc();
+    float getR();
 protected:
     std::vector<Polygon> __facets;
     std::shared_ptr<Polygon> topFacet_ptr, bottomFacet_ptr;
     std::string name;
     int number;
     float __outerRadius;
+    Point tfc;
+    Point bfc;
 };

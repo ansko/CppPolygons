@@ -1,11 +1,17 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <ctime>
+#include <cstdlib>
 
-#include "../polygonal_cylinder_in_the_shell.hpp"
+#include "../polygonal_cylinder.hpp"
 #include "../settings_parser.hpp"
 
 #include "../printToCSGCircles.cpp" // this is a very bad practice!
+#include "../percolation/percolation_checker.hpp"
+
+
+//const float  PI_F = 3.14159265358979f; // this is a very bad practice!
 
 
 int main(int argc, char **argv)
@@ -46,20 +52,25 @@ int main(int argc, char **argv)
     int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
     std::string FNAME = sp.getProperty("FNAME");
 
-    float r = R / 2; // for triangles. this is a very bad practice!
+    float edgeLength = R * 2  * sin(PI_F / n);
+    float innerRadius = edgeLength / 2 / tan(PI_F / n);
+   // float r = R / 2; // for triangles. this is a very bad practice!
+    float r = R * cos(PI_F / n);
 
     std::cout << "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
               << "number of filler particles = " << N << std::endl
               << "inner radius = " << r << std::endl
               << "thickness = " << h << std::endl
-              << "shell thickness = " << sh << std::endl
+              << "shell thickness =" << sh << std::endl
               << "cube edge length = " << cubeSize << std::endl
               << std::endl;
 
     // starting to create initial configuration
-    std::vector<std::shared_ptr<PolygonalCylinderInTheShell> > polCyls;
+    std::vector<std::shared_ptr<PolygonalCylinder> > polCyls;
+    std::vector<std::shared_ptr<PolygonalCylinder> > shells;
     int attempt = 0;
     int step = 0;
+    srand(time(NULL));
     while(polCyls.size() < N && ++attempt < MAX_ATTEMPTS) {
         ++step;
         if(step % (int(MAX_ATTEMPTS / 10)) == 0 || step == 1)
@@ -68,15 +79,24 @@ int main(int argc, char **argv)
                       << " ready " << polCyls.size()
                       << " of " << N
                       << std::endl;
-        std::shared_ptr<PolygonalCylinderInTheShell> polCyl_ptr =
-            std::make_shared<PolygonalCylinderInTheShell>(n, h, R, sh);
+        std::shared_ptr<PolygonalCylinder> polCyl_ptr =
+            std::make_shared<PolygonalCylinder>(n, h, R);
+        std::shared_ptr<PolygonalCylinder> sh_ptr =
+            std::make_shared<PolygonalCylinder>(n, h + 2 * sh, R + sh);
         float dx = static_cast<float>(rand()) / RAND_MAX * cubeSize;
         float dy = static_cast<float>(rand()) / RAND_MAX * cubeSize;
         float dz = static_cast<float>(rand()) / RAND_MAX * cubeSize;
-        polCyl_ptr->rotateAroundX(PI_F * static_cast<float>(rand()) / RAND_MAX);
-        polCyl_ptr->rotateAroundY(PI_F * static_cast<float>(rand()) / RAND_MAX);
-        polCyl_ptr->rotateAroundZ(PI_F * static_cast<float>(rand()) / RAND_MAX);
+        float alpha = static_cast<float>(rand()) / RAND_MAX;
+        float beta = static_cast<float>(rand()) / RAND_MAX;
+        float gamma = static_cast<float>(rand()) / RAND_MAX;
+        polCyl_ptr->rotateAroundX(PI_F * alpha);
+        polCyl_ptr->rotateAroundY(PI_F * beta);
+        polCyl_ptr->rotateAroundZ(PI_F * gamma);
         polCyl_ptr->translate(dx, dy, dz);
+        sh_ptr->rotateAroundX(PI_F * alpha);
+        sh_ptr->rotateAroundY(PI_F * beta);
+        sh_ptr->rotateAroundZ(PI_F * gamma);
+        sh_ptr->translate(dx, dy, dz);
         if (polCyl_ptr->crossesBox(cubeSize))
             continue;
         int flag = 0;
@@ -88,15 +108,25 @@ int main(int argc, char **argv)
         if(flag == 1)
             continue;
         polCyls.push_back(polCyl_ptr);
+        shells.push_back(sh_ptr);
     } 
     std::cout << std::endl;
 
     float pcVolume =  PI_F * pow(r, 2) * h;
+    float shVolume =  PI_F * pow(r + sh, 2) * (h + 2 * sh);
     float cubeVolume = pow(cubeSize, 3);
-    std::cout << "volume fraction = "
+    std::cout << "volume fraction of filler = "
               << polCyls.size() * pcVolume / cubeVolume
+              << "\nvolume fraction of interface = "
+              << polCyls.size() * (shVolume - pcVolume) / cubeVolume
+              << "\nvolume fraction of not-matrix = "
+              << polCyls.size() * shVolume / cubeVolume
               << std::endl;
-    printToCSGAsCircleCylinders(FNAME, polCyls);
+    std::cout << "AR = " << 2 * r / h << std::endl;
+    printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
+
+    PercolationChecker pc(shells); 
+    std::cout << pc.sideToSide() << std::endl;
 
     std::cout << "Successful completion\n";
 
