@@ -63,6 +63,10 @@ Polygon PolygonalCylinder::topFacet() {
 Polygon PolygonalCylinder::bottomFacet() {
     return *bottomFacet_ptr;
 };
+
+float PolygonalCylinder::getR() {
+    return __outerRadius;
+}
 /*
 bool PolygonalCylinder::crossesOtherPolygonalCylinder(
         PolygonalCylinder otherPolygonalCylinder,
@@ -204,7 +208,8 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     SettingsParser sp("options.ini");
     sp.parseSettings();
     float THICKNESS = (float)std::stod(sp.getProperty("THICKNESS"));
-    float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+    //float OUTER_RADIUS = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+    float OUTER_RADIUS = __outerRadius;
     float verticesNumber = (float)std::stod(sp.getProperty("VERTICES_NUMBER"));
     float edgeLength = OUTER_RADIUS * 2  * sin(PI_F / verticesNumber);
     float innerRadius = edgeLength / 2 / tan(PI_F / verticesNumber);

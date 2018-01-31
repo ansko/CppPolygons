@@ -51,7 +51,7 @@ bool PercolationChecker::sideToSide()
                 if (vertex.y() < miny)
                     miny = vertex.y();
                 else if (vertex.y() > maxy)
-                    maxy = vertex.x();
+                    maxy = vertex.y();
                 if (vertex.z() < minz)
                     minz = vertex.z();
                 else if (vertex.z() > maxz)

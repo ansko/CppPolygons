@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     float edgeLength = R * 2  * sin(PI_F / n);
     float innerRadius = edgeLength / 2 / tan(PI_F / n);
    // float r = R / 2; // for triangles. this is a very bad practice!
-    float r = innerRadius;
+    float r = R * cos(PI_F / n);
 
     std::cout << "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
               << "number of filler particles = " << N << std::endl
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
         std::shared_ptr<PolygonalCylinder> polCyl_ptr =
             std::make_shared<PolygonalCylinder>(n, h, R);
         std::shared_ptr<PolygonalCylinder> sh_ptr =
-            std::make_shared<PolygonalCylinder>(n, h + sh, R);
+            std::make_shared<PolygonalCylinder>(n, h + 2 * sh, R + sh);
         float dx = static_cast<float>(rand()) / RAND_MAX * cubeSize;
         float dy = static_cast<float>(rand()) / RAND_MAX * cubeSize;
         float dz = static_cast<float>(rand()) / RAND_MAX * cubeSize;
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
               << "\nvolume fraction of not-matrix = "
               << polCyls.size() * shVolume / cubeVolume
               << std::endl;
-    std::cout << "AR = " << 2 * (r + sh) / (h + 2 * sh) << std::endl;
+    std::cout << "AR = " << 2 * r / h << std::endl;
     printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
 
     PercolationChecker pc(shells); 

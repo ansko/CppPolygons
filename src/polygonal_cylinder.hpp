@@ -26,6 +26,7 @@ public:
     int getNumber();
     Point getTfc();
     Point getBfc();
+    float getR();
 protected:
     std::vector<Polygon> __facets;
     std::shared_ptr<Polygon> topFacet_ptr, bottomFacet_ptr;

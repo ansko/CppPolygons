@@ -69,6 +69,7 @@ bool Polygon::crossesOtherPolygon2(Polygon otherPolygon) {
 }
 
 bool Polygon::containsPoint(Point pt) {
+    float eps = 0.01;
     int s = __vertices.size(), flag=0;
     Vector center, otherCenter;
     for (auto vertex : __vertices)
@@ -96,7 +97,7 @@ bool Polygon::containsPoint(Point pt) {
         Vector v01 = Vector(pt0, pt1);
         Vector v0pt = Vector(pt0, pt);
         float tmp = v02.vectorMultiply(v01).scalarMultiply(v01.vectorMultiply(v0pt));
-        if (tmp > 0)
+        if (tmp > eps)
             flag = 1;
     }
     if (flag == 0)
