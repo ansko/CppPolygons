@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "../settings_parser.hpp"
-#include "../polygon.hpp"
-#include "../polygonal_cylinder.hpp"
+#include "../geometries/polygon.hpp"
+#include "../geometries/polygonal_cylinder.hpp"
 
 
 class PercolationChecker

@@ -7,7 +7,8 @@
 #include <vector>
 
 
-class SettingsParser {
+class SettingsParser
+{
 public:
     SettingsParser(std::string fname);
     void parseSettings();
