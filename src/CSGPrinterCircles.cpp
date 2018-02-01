@@ -1,19 +1,11 @@
-#include <fstream>
-#include <string>
-#include <vector>
-
-#include "plane.hpp"
-#include "polygonal_cylinder.hpp"
-#include "polygonal_cylinder_in_the_shell.hpp"
-#include "settings_parser.hpp"
+#include "CSGPrinterCircles.hpp"
 
 
-const float  PI_F = 3.14159265358979f;
-
-
-void printToCSGAsCircleCylindersShells(std::string fname,
+void CSGPrinterCircles::printToCSGAsCircleCylindersShells(
+         std::string fname,
          std::vector<std::shared_ptr<PolygonalCylinder> > polCyl_ptrs,
-         std::vector<std::shared_ptr<PolygonalCylinder> > sh_ptrs)
+         std::vector<std::shared_ptr<PolygonalCylinder> > sh_ptrs
+)
 {
     std::ofstream fout;
     fout.open(fname);

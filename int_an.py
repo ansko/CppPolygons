@@ -15,7 +15,7 @@ def main():
         for line in f:
             minmaxes.append(line.split())
 
-    with open('opt.ini') as f:
+    with open('options.ini') as f:
         for line in f:
             if line.startswith('CUBE_EDGE_LENGTH'):
                 cubeSize = float(line.split()[1])

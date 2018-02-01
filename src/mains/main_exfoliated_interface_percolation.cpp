@@ -4,10 +4,10 @@
 #include <ctime>
 #include <cstdlib>
 
-#include "../polygonal_cylinder.hpp"
+#include "../geometries/polygonal_cylinder.hpp"
 #include "../settings_parser.hpp"
 
-#include "../printToCSGCircles.cpp" // this is a very bad practice!
+#include "../CSGPrinterCircles.hpp"
 #include "../percolation/percolation_checker.hpp"
 
 
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
         ./exe_name
 */
 
-    std::cout << "This is a test main function\n";
+//    std::cout << "This is a test main function\n";
 
     // parsing settings
     SettingsParser sp("options.ini");
@@ -123,7 +123,9 @@ int main(int argc, char **argv)
               << polCyls.size() * shVolume / cubeVolume
               << std::endl;
     std::cout << "AR = " << 2 * r / h << std::endl;
-    printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
+
+    std::shared_ptr<CSGPrinterCircles> printer_ptr;
+    printer_ptr->printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
 
     PercolationChecker pc(shells); 
     std::cout << pc.sideToSide() << std::endl;

@@ -5,13 +5,13 @@
 import math
 import subprocess
 
-REPEATS = 1000
+REPEATS = 1
 CONC_RUNS = 100
-STEP = 1
+STEP = 1000
 
 
-exf_opts = {'CUBE_EDGE_LENGTH': 10.0,
-            'MAX_ATTEMPTS': 1000.0,
+exf_opts = {'CUBE_EDGE_LENGTH': 100.0,
+            'MAX_ATTEMPTS': 1000000.0,
             'VERTICES_NUMBER': 8.0,
             'THICKNESS': 0.1,
             'OUTER_RADIUS': 1.0,
@@ -28,7 +28,7 @@ def percolationConcentration():
     l = exf_opts['CUBE_EDGE_LENGTH']
     f = open('stdout_polygonal.log', 'w')
     log = open('logExec.log', 'w')
-    for i in range(CONC_RUNS):
+    for i in range(1, CONC_RUNS):
         percRates = [0, 0, 0]
         concentration = diskVolume * i * STEP / l**3
         print("%.4f" % concentration, end=" ")
@@ -64,7 +64,6 @@ def percolationConcentration():
         percRates[1] /= REPEATS
         percRates[2] /= REPEATS
         averageRate = (percRates[0] + percRates[1] + percRates[2]) / 3
-        #print(percRates, end=" ")
         print(averageRate)
         
 

@@ -10,7 +10,8 @@ void SettingsParser::parseSettings() {
     std::string key;
     std::string value;
     while(fin >> key && fin >> value) {
-        __keysValues.insert(std::pair<std::string, std::string>(std::make_pair(key, value)));
+        __keysValues.insert(
+            std::pair<std::string, std::string>(std::make_pair(key, value)));
     }
     fin.close();
     return;

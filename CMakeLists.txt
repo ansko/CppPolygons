@@ -9,29 +9,31 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
 set (HEADERS 
-	src/line_segment.hpp
-	src/plane.hpp
-	src/point.hpp
-	src/polygon.hpp
-	src/polygonal_cylinder.hpp
-    src/vector.hpp
+	src/geometries/line_segment.hpp
+	src/geometries/plane.hpp
+	src/geometries/point.hpp
+	src/geometries/polygon.hpp
+	src/geometries/polygonal_cylinder.hpp
+    src/geometries/vector.hpp
     src/det.hpp
     src/settings_parser.hpp
-    src/tactoid.hpp
-    src/polygonal_cylinder_in_the_shell.hpp
+    src/CSGPrinterCircles.hpp
+   # src/tactoid.hpp
+   # src/geometries/polygonal_cylinder_in_the_shell.hpp
     src/percolation/percolation_checker.cpp)
 
 set (SOURCES
     src/det.cpp 
-    src/line_segment.cpp
-    src/tactoid.cpp
-    src/plane.cpp
-    src/point.cpp
-    src/polygon.cpp
-    src/polygonal_cylinder.cpp
-    src/vector.cpp
+    src/geometries/line_segment.cpp
+   # src/tactoid.cpp
+    src/geometries/plane.cpp
+    src/geometries/point.cpp
+    src/geometries/polygon.cpp
+    src/geometries/polygonal_cylinder.cpp
+    src/geometries/vector.cpp
     src/settings_parser.cpp
-    src/polygonal_cylinder_in_the_shell.cpp
+    src/CSGPrinterCircles.cpp
+   # src/geometries/polygonal_cylinder_in_the_shell.cpp
     src/percolation/percolation_checker.cpp
    # just one of these!
    # src/mains/main_exfoliated.cpp
