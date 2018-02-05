@@ -10,7 +10,7 @@ void CSGPrinterCircles::printToCSGAsCircleCylindersShells(
     std::ofstream fout;
     fout.open(fname);
 
-    SettingsParser sp("options.ini");
+    SettingsParser sp("tmp/options.ini");
     sp.parseSettings();
     std::string CUBE_EDGE_LENGTH = sp.getProperty("CUBE_EDGE_LENGTH");
     std::string VERTICES_NUMBER = sp.getProperty("VERTICES_NUMBER");
