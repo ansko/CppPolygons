@@ -6,6 +6,7 @@ import copy
 import math
 import os
 import subprocess
+import resource
 
 import pprint
 pprint=pprint.PrettyPrinter(indent=4).pprint
@@ -144,7 +145,13 @@ def crystRate():
             fopt.write('FNAME ' + geofname + '\n')
             fopt.close()
             subprocess.call(['./polygonal',], stdout=out_p)
+
+            resource.setrlimit(resource.RLIMIT_CPU, (100, 100))
             subprocess.call([genMeshExe, geofname, '1', '3', '3'], stdout=out_g)
+            resource.setrlimit(
+                resource.RLIMIT_CPU,
+                (resource.RLIM_INFINITY, resource.RLIM_INFINITY)
+            )
             volfname = 'generated.vol'
             vols = analyzeVol(volfname)
             flag = ifPercolate()
@@ -155,9 +162,7 @@ def crystRate():
             ave_vols[0] /= REPEATS
             ave_vols[1] /= REPEATS
             ave_vols[2] /= REPEATS
-            #print(ave_vols)
         s += str(ave_vols[0]) +  ' ' + str(ave_vols[1]) + ' ' + str(ave_vols[2])
-            #print(s)
         results.append(s)
     print('DesConc   PercFlag   VolFil   VolInt   VolMat')
     for s in results:
