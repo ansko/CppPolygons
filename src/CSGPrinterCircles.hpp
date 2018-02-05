@@ -14,7 +14,6 @@ const float  PI_F = 3.14159265358979f;
 class CSGPrinterCircles
 {
 public:
-    CSGPrinterCircles();
     void printToCSGAsCircleCylindersShells(
          std::string fname,
          std::vector<std::shared_ptr<PolygonalCylinder> > polCyl_ptrs,

@@ -1,14 +1,12 @@
+#include <ctime>
+
 #include <iostream>
 #include <memory>
 #include <vector>
 
-#include "../polygonal_cylinder.hpp"
+#include "../geometries/polygonal_cylinder.hpp"
 #include "../settings_parser.hpp"
-
-#include "../printToCSGCircles.cpp" // this is a very bad practice!
-
-
-//const float  PI_F = 3.14159265358979f; // this is a very bad practice!
+#include "../CSGPrinterCircles.hpp"
 
 
 int main(int argc, char **argv)
@@ -34,9 +32,7 @@ int main(int argc, char **argv)
     Usage:
         ./exe_name
 */
-
-    std::cout << "This is a test main function\n";
-
+    std::cout << time(0) << std::endl;
     // parsing settings
     SettingsParser sp("options.ini");
     sp.parseSettings();
@@ -48,33 +44,21 @@ int main(int argc, char **argv)
     int N = (int)std::stod(sp.getProperty("DISKS_NUM"));
     int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
     std::string FNAME = sp.getProperty("FNAME");
-
     float edgeLength = R * 2  * sin(PI_F / n);
-    float innerRadius = edgeLength / 2 / tan(PI_F / n);
-   // float r = R / 2; // for triangles. this is a very bad practice!
-    float r = innerRadius;
-
-    std::cout << "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
+    float r = R * cos(PI_F / n);
+    std::cout << "AR = " << 2 * r /h << std::endl
+              //<< "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
               << "number of filler particles = " << N << std::endl
               << "inner radius = " << r << std::endl
               << "thickness = " << h << std::endl
-              << "shell thickness =" << sh << std::endl
-              << "cube edge length = " << cubeSize << std::endl
-              << std::endl;
+              << "shell thickness = " << sh << std::endl
+              << "cube edge length = " << cubeSize << std::endl;
 
     // starting to create initial configuration
     std::vector<std::shared_ptr<PolygonalCylinder> > polCyls;
     std::vector<std::shared_ptr<PolygonalCylinder> > shells;
     int attempt = 0;
-    int step = 0;
     while(polCyls.size() < N && ++attempt < MAX_ATTEMPTS) {
-        ++step;
-        if(step % (int(MAX_ATTEMPTS / 10)) == 0 || step == 1)
-            std::cout << "step = " << step
-                      << " of " << MAX_ATTEMPTS
-                      << " ready " << polCyls.size()
-                      << " of " << N
-                      << std::endl;
         std::shared_ptr<PolygonalCylinder> polCyl_ptr =
             std::make_shared<PolygonalCylinder>(n, h, R);
         std::shared_ptr<PolygonalCylinder> sh_ptr =
@@ -106,7 +90,7 @@ int main(int argc, char **argv)
         polCyls.push_back(polCyl_ptr);
         shells.push_back(sh_ptr);
     } 
-    std::cout << std::endl;
+    std::cout << "made " << polCyls.size() << std::endl;
 
     float pcVolume =  PI_F * pow(r, 2) * h;
     float shVolume =  PI_F * pow(r + sh, 2) * (h + 2 * sh);
@@ -118,9 +102,8 @@ int main(int argc, char **argv)
               << "\nvolume fraction of not-matrix = "
               << polCyls.size() * shVolume / cubeVolume
               << std::endl;
-    printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
-
-    std::cout << "Successful completion\n";
+    CSGPrinterCircles printer;
+    printer.printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
 
     return 0;
 }

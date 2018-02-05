@@ -2,6 +2,9 @@
 #coding=utf-8
 
 
+import sys
+
+
 class volReader():
     def __init__(self, fname):
         self.__fname = fname
@@ -29,6 +32,8 @@ class volReader():
     def readPoints(self):
         with open(self.__fname, 'r') as f:
             for i, line in enumerate(f):
+                if self.__pointsStartStringNum is None:
+                    continue
                 if (i >= self.__pointsStartStringNum and
                     i < self.__pointsStartStringNum + self.__pointsNum):
                     self.__points.append([float(line.split()[0]),
@@ -38,6 +43,8 @@ class volReader():
     def readVolumes(self):
         with open(self.__fname, 'r') as f:
             for i, line in enumerate(f):
+                if self.__volumesStartStringNum is None:
+                    continue
                 if (i >= self.__volumesStartStringNum and
                     i < self.__volumesStartStringNum + self.__volumesNum):
                     self.__volumeVertices.append([int(line.split()[2]),
@@ -83,14 +90,13 @@ def det(a11, a12, a13, a21, a22, a23, a31, a32, a33):
     return float(d)
 
 
-#a = volReader('generated.vol')
-a = volReader('out.mesh')
+fname = sys.argv[1]
+a = volReader(fname)
 a.readPoints()
 a.readVolumes()
-#print(a.points())
 a.calculateVolumeFractions()
 vols = a.volumes()
-print(vols.sort())
-print('phase1: ', vols[0] / vols[3] * 100, ' percents')
-print('phase2: ', vols[1] / vols[3] * 100, ' percents')
-print('phase3: ', vols[2] / vols[3] * 100, ' percents')
+string = (str(vols[1] / vols[0]) + ' ' +
+          str(vols[2] / vols[0]) + ' ' +
+          str(vols[3] / vols[0]))
+print(string)

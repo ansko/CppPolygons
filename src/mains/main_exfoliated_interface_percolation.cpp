@@ -37,48 +37,44 @@ int main(int argc, char **argv)
     Usage:
         ./exe_name
 */
-
-//    std::cout << "This is a test main function\n";
-
+    std::cout << "------\n";
     // parsing settings
-    SettingsParser sp("options.ini");
+    SettingsParser sp("tmp/options.ini");
     sp.parseSettings();
+    std::cout << "1\n";
     float cubeSize = (float)std::stod(sp.getProperty("CUBE_EDGE_LENGTH"));
+    std::cout << "1\n";
     int n = (int)std::stod(sp.getProperty("VERTICES_NUMBER"));
+    std::cout << "1\n";
     float h = (float)std::stod(sp.getProperty("THICKNESS"));
+    std::cout << "1\n";
     float sh = (float)std::stod(sp.getProperty("SHELL_THICKNESS"));
+    std::cout << "1\n";
     float R = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
+    std::cout << "1\n";
     int N = (int)std::stod(sp.getProperty("DISKS_NUM"));
+    std::cout << "1\n";
     int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
+    std::cout << "1\n";
     std::string FNAME = sp.getProperty("FNAME");
-
+    std::string PERC_FNAME = sp.getProperty("PERC_FNAME");
     float edgeLength = R * 2  * sin(PI_F / n);
     float innerRadius = edgeLength / 2 / tan(PI_F / n);
-   // float r = R / 2; // for triangles. this is a very bad practice!
     float r = R * cos(PI_F / n);
-
-    std::cout << "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
+    std::cout << "AR = " << 2 * r /h << std::endl
+              //<< "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
               << "number of filler particles = " << N << std::endl
               << "inner radius = " << r << std::endl
               << "thickness = " << h << std::endl
-              << "shell thickness =" << sh << std::endl
-              << "cube edge length = " << cubeSize << std::endl
-              << std::endl;
-
+              << "shell thickness = " << sh << std::endl
+              << "cube edge length = " << cubeSize << std::endl;
     // starting to create initial configuration
     std::vector<std::shared_ptr<PolygonalCylinder> > polCyls;
     std::vector<std::shared_ptr<PolygonalCylinder> > shells;
     int attempt = 0;
-    int step = 0;
     srand(time(NULL));
     while(polCyls.size() < N && ++attempt < MAX_ATTEMPTS) {
-        ++step;
-        if(step % (int(MAX_ATTEMPTS / 10)) == 0 || step == 1)
-            std::cout << "step = " << step
-                      << " of " << MAX_ATTEMPTS
-                      << " ready " << polCyls.size()
-                      << " of " << N
-                      << std::endl;
+        std::cout << attempt << " ";
         std::shared_ptr<PolygonalCylinder> polCyl_ptr =
             std::make_shared<PolygonalCylinder>(n, h, R);
         std::shared_ptr<PolygonalCylinder> sh_ptr =
@@ -110,8 +106,6 @@ int main(int argc, char **argv)
         polCyls.push_back(polCyl_ptr);
         shells.push_back(sh_ptr);
     } 
-    std::cout << std::endl;
-
     float pcVolume =  PI_F * pow(r, 2) * h;
     float shVolume =  PI_F * pow(r + sh, 2) * (h + 2 * sh);
     float cubeVolume = pow(cubeSize, 3);
@@ -122,15 +116,11 @@ int main(int argc, char **argv)
               << "\nvolume fraction of not-matrix = "
               << polCyls.size() * shVolume / cubeVolume
               << std::endl;
-    std::cout << "AR = " << 2 * r / h << std::endl;
-
+    std::cout << "CylsNum = " << polCyls.size() << ", ";
+    std::cout << "Attempts = " << attempt << std::endl;
     std::shared_ptr<CSGPrinterCircles> printer_ptr;
     printer_ptr->printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
-
     PercolationChecker pc(shells); 
-    std::cout << pc.sideToSide() << std::endl;
-
-    std::cout << "Successful completion\n";
-
+    pc.sideToSide();
     return 0;
 }

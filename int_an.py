@@ -6,25 +6,24 @@ pprint=pprint.PrettyPrinter(indent=4).pprint
 def main():
     ints = []
     minmaxes = []
-
-    with open('intersections.log') as f:
+    chains = []
+    percFlag = 0
+  # reading numbers of intersecting cylinders
+    with open('tmp/intersections.log') as f:
         for line in f:
             ints.append([int(line.split()[0]), int(line.split()[1])]);
-
-    with open('coords.log') as f:
+  # reading bbox coordinates of cylinders to find if there is percolation
+    with open('tmp/coords.log') as f:
         for line in f:
             minmaxes.append(line.split())
-
-    with open('options.ini') as f:
-        for line in f:
-            if line.startswith('CUBE_EDGE_LENGTH'):
-                cubeSize = float(line.split()[1])
-
     for i in range(len(minmaxes)):
         for j in range(len(minmaxes[i])):
             minmaxes[i][j] = float(minmaxes[i][j])
-
-    chains = []
+  # reading cube size from options file
+    with open('tmp/options.ini') as f:
+        for line in f:
+            if line.startswith('CUBE_EDGE_LENGTH'):
+                cubeSize = float(line.split()[1])
     for intersection in ints:
         flag1 = False
         flag2 = False
@@ -37,7 +36,6 @@ def main():
                 flag2 = True
         if not flag1 and not flag2:
             chains.append(set(intersection))
-
     chain_minmaxes = [[cubeSize, 0, cubeSize, 0, cubeSize, 0]
                           for i in range(len(chains))]
 
@@ -57,7 +55,6 @@ def main():
             if minmaxes[pc][5] > minmax[5]:
                 minmax[5] = minmaxes[pc][5]
         chain_minmaxes[i] = minmax
-
     for i, chain in enumerate(chains):
         flagx = flagy = flagz = False
         if chain_minmaxes[i][1] - chain_minmaxes[i][0] > cubeSize:
@@ -66,10 +63,8 @@ def main():
             flagy = True
         if chain_minmaxes[i][5] - chain_minmaxes[i][4] > cubeSize:
             flagz = True
-        #if True in [flagx, flagy, flagz]:
-        #print(chain, chain_minmaxes[i], flagx, flagy, flagz)
-        #print(str(int(flagx)) + str(int(flagy)) + str(int(flagz)))
-        print(flagx, flagy, flagz)
-
+        if True in (flagx, flagy, flagz):
+            percFlag += 1
+    print(percFlag)
 
 main()
