@@ -1,4 +1,4 @@
-#include "percolation_checker.hpp"
+#include "../../include/percolation/percolation_checker.hpp"
 
 
 PercolationChecker::PercolationChecker(

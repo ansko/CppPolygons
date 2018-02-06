@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "line_segment.hpp"
+#include "../../include/geometries/line_segment.hpp"
 
 
 LineSegment::LineSegment(Point ptBegin, Point ptEnd) {
