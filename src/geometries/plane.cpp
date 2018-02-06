@@ -1,4 +1,4 @@
-#include "plane.hpp"
+#include "../../include/geometries/plane.hpp"
 
 Plane::Plane(float a, float b, float c, float d) {
     __a = a;

@@ -4,77 +4,49 @@
 #include <ctime>
 #include <cstdlib>
 
-#include "../geometries/polygonal_cylinder.hpp"
-#include "../settings_parser.hpp"
-
-#include "../CSGPrinterCircles.hpp"
-#include "../percolation/percolation_checker.hpp"
-
-
-//const float  PI_F = 3.14159265358979f; // this is a very bad practice!
+#include "include/csg_printer_circles.hpp"
+#include "include/settings_parser.hpp"
+#include "include/geometries/polygonal_cylinder.hpp"
+#include "include/mesh_generation/mesh.hpp"
+#include "include/mesh_generation/mesh_generator.hpp"
+#include "include/percolation/percolation_checker.hpp"
 
 
 int main(int argc, char **argv)
 {
-/*
-    This is the simplest main function that creates a system of 
-    exfoliated particles without the interface, 
-    randonly ditributed in the cubic cell.
-
-  
-    Nomenclature:
-        cubeSize - the length of the cube edge
-        n - vertices number in polygon into what the resulting top/bottom
-            of the cylinder will be inscribed
-        h - thickness of the cylinder
-        R - radius of the circumcircle about the polygon
-        N - number of exfoliated particles
-        MAX_ATTEMPTS - maximum number of the attempts to generate initial
-                       configuration
-        FNAME - output geofile name
-
-
-    Usage:
-        ./exe_name
-*/
-    std::cout << "------\n";
-    // parsing settings
+    std::cout << "--polygonal_start--\n";
+  // parsing settings
     SettingsParser sp("tmp/options.ini");
     sp.parseSettings();
-    std::cout << "1\n";
     float cubeSize = (float)std::stod(sp.getProperty("CUBE_EDGE_LENGTH"));
-    std::cout << "1\n";
     int n = (int)std::stod(sp.getProperty("VERTICES_NUMBER"));
-    std::cout << "1\n";
     float h = (float)std::stod(sp.getProperty("THICKNESS"));
-    std::cout << "1\n";
     float sh = (float)std::stod(sp.getProperty("SHELL_THICKNESS"));
-    std::cout << "1\n";
     float R = (float)std::stod(sp.getProperty("OUTER_RADIUS"));
-    std::cout << "1\n";
     int N = (int)std::stod(sp.getProperty("DISKS_NUM"));
-    std::cout << "1\n";
     int MAX_ATTEMPTS = (int)std::stod(sp.getProperty("MAX_ATTEMPTS"));
-    std::cout << "1\n";
     std::string FNAME = sp.getProperty("FNAME");
     std::string PERC_FNAME = sp.getProperty("PERC_FNAME");
     float edgeLength = R * 2  * sin(PI_F / n);
     float innerRadius = edgeLength / 2 / tan(PI_F / n);
     float r = R * cos(PI_F / n);
-    std::cout << "AR = " << 2 * r /h << std::endl
-              //<< "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
+    std::cout << "**parameters_start**" << std::endl
+              << "AR = " << 2 * r /h << std::endl
+              << "MAX_ATTEMPTS = " << MAX_ATTEMPTS << std::endl
               << "number of filler particles = " << N << std::endl
               << "inner radius = " << r << std::endl
               << "thickness = " << h << std::endl
               << "shell thickness = " << sh << std::endl
-              << "cube edge length = " << cubeSize << std::endl;
-    // starting to create initial configuration
+              << "cube edge length = " << cubeSize << std::endl
+              << "**parameters_end**" << std::endl;
+  // starting to create initial configuration
     std::vector<std::shared_ptr<PolygonalCylinder> > polCyls;
     std::vector<std::shared_ptr<PolygonalCylinder> > shells;
     int attempt = 0;
     srand(time(NULL));
     while(polCyls.size() < N && ++attempt < MAX_ATTEMPTS) {
-        std::cout << attempt << " ";
+        if (attempt % (MAX_ATTEMPTS / 10) == 0)
+            std::cout << attempt << std::endl;
         std::shared_ptr<PolygonalCylinder> polCyl_ptr =
             std::make_shared<PolygonalCylinder>(n, h, R);
         std::shared_ptr<PolygonalCylinder> sh_ptr =
@@ -110,17 +82,20 @@ int main(int argc, char **argv)
     float shVolume =  PI_F * pow(r + sh, 2) * (h + 2 * sh);
     float cubeVolume = pow(cubeSize, 3);
     std::cout << "volume fraction of filler = "
-              << polCyls.size() * pcVolume / cubeVolume
-              << "\nvolume fraction of interface = "
-              << polCyls.size() * (shVolume - pcVolume) / cubeVolume
-              << "\nvolume fraction of not-matrix = "
-              << polCyls.size() * shVolume / cubeVolume
-              << std::endl;
+              << polCyls.size() * pcVolume / cubeVolume << std::endl;
     std::cout << "CylsNum = " << polCyls.size() << ", ";
     std::cout << "Attempts = " << attempt << std::endl;
+  // outputing .geo file
+    std::cout << "Printing geometry to file " << FNAME << std::endl;
     std::shared_ptr<CSGPrinterCircles> printer_ptr;
     printer_ptr->printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
+  // producing data for percolation checker (python3 script)
     PercolationChecker pc(shells); 
     pc.sideToSide();
+  // Generating mesh
+    MeshGenerator mesher(shells);
+    mesher.generateMesh();
+    Mesh m = mesher.getMesh();
+    std::cout << "--polygonal_end--\n";
     return 0;
 }

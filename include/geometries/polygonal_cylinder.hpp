@@ -6,7 +6,6 @@
 
 #include "point.hpp"
 #include "polygon.hpp"
-//#include "settings_parser.hpp"
 
 
 class PolygonalCylinder {
@@ -15,7 +14,9 @@ public:
     Polygon topFacet();
     Polygon bottomFacet();
     std::vector<Polygon> facets();
-    bool crossesOtherPolygonalCylinder(PolygonalCylinder otherPolygonalCylinder, int mode);
+    bool crossesOtherPolygonalCylinder(
+        PolygonalCylinder otherPolygonalCylinder, int mode
+    );
     virtual bool crossesBox(float boxSize);
     void translate(float dx, float dy, float dz);
     void rotateAroundX(float angle);

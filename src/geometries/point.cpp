@@ -1,4 +1,4 @@
-#include "point.hpp"
+#include "../../include/geometries/point.hpp"
 
 
 Point::Point() {

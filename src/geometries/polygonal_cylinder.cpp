@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "polygonal_cylinder.hpp"
+#include "../../include/geometries/polygonal_cylinder.hpp"
 
 const float  PI_F = 3.14159265358979f;
 

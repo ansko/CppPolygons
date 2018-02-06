@@ -1,7 +1,7 @@
 #include <cmath>
 #include <vector>
 
-#include "det.hpp"
+#include "../include/det.hpp"
 
 //extern float determinant(std::vector<std::vector<float> > M, int dim) {
 extern float determinant(std::array<std::array<float, 3>, 3> M, int dim) {

@@ -1,7 +1,4 @@
-#include <iostream>
-#include <vector>
-
-#include "polygon.hpp"
+#include "../../include/geometries/polygon.hpp"
 
 Polygon::Polygon(std::vector<Point> vertices) {
     __vertices = vertices;
