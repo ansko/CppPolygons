@@ -10,6 +10,7 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 
 set (HEADERS 
     include/csg_printer_circles.hpp
+    include/csg_printer_polygons.hpp
     include/det.hpp
 	include/geometries/line_segment.hpp
 	include/geometries/plane.hpp
@@ -24,6 +25,7 @@ set (HEADERS
 
 set (SOURCES
     src/csg_printer_circles.cpp
+    src/csg_printer_polygons.cpp
     src/det.cpp 
     src/geometries/line_segment.cpp
     src/geometries/plane.cpp
@@ -36,11 +38,12 @@ set (SOURCES
     src/mesh_generation/mesh_generator.cpp
     src/percolation/percolation_checker.cpp
    # just one of these!
+    exfoliated_interface_percolation_polygons.cpp)
    # src/mains/main_exfoliated.cpp
    # src/mains/main_exfoliated_interface.cpp)
    # src/mains/main_exfoliated_shell.cpp)
    # exfoliated_interface_percolation.cpp
-    mesher.cpp)
+   # mesher.cpp)
  
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 
