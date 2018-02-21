@@ -6,6 +6,7 @@
 
 #include "include/settings_parser.hpp"
 #include "include/csg_printer_circles.hpp"
+#include "include/csg_printer_polygons.hpp"
 #include "include/geometries/polygonal_cylinder.hpp"
 #include "include/percolation/percolation_checker.hpp"
 
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
     srand(time(NULL));
     while(polCyls.size() < N && ++attempt < MAX_ATTEMPTS) {
         if (attempt % (MAX_ATTEMPTS / 10) == 0)
-            std::cout << attempt << std::endl;
+            std::cout << attempt << " " << polCyls.size() << std::endl;
         std::shared_ptr<PolygonalCylinder> polCyl_ptr =
             std::make_shared<PolygonalCylinder>(n, h, R);
         std::shared_ptr<PolygonalCylinder> sh_ptr =
@@ -104,8 +105,10 @@ int main(int argc, char **argv)
               << polCyls.size() * pcVolume / cubeVolume << std::endl;
     std::cout << "CylsNum = " << polCyls.size() << ", ";
     std::cout << "Attempts = " << attempt << std::endl;
-    std::shared_ptr<CSGPrinterCircles> printer_ptr;
-    printer_ptr->printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
+//    std::shared_ptr<CSGPrinterCircles> printer_ptr;
+//    printer_ptr->printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
+    std::shared_ptr<CSGPrinterPolygons> printer_ptr;
+    printer_ptr->printToCSGAsPolygonalCylindersShells(FNAME, polCyls, shells);
     PercolationChecker pc(shells); 
     pc.sideToSide();
     std::cout << "--polygonal_end--\n";

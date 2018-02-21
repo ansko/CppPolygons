@@ -66,7 +66,7 @@ bool Polygon::crossesOtherPolygon2(Polygon otherPolygon) {
 }
 
 bool Polygon::containsPoint(Point pt) {
-    float eps = 0.01;
+    float eps = 0.0001;
     int s = __vertices.size(), flag=0;
     Vector center, otherCenter;
     for (auto vertex : __vertices)

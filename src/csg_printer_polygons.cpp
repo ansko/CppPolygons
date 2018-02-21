@@ -1,6 +1,9 @@
 #include "../include/csg_printer_polygons.hpp"
 
 
+const float  PI_F = 3.14159265358979;
+
+
 void CSGPrinterPolygons::printToCSGAsPolygonalCylindersShells(
          std::string fname,
          std::vector<std::shared_ptr<PolygonalCylinder> > polCyl_ptrs,
@@ -40,21 +43,29 @@ void CSGPrinterPolygons::printToCSGAsPolygonalCylindersShells(
                              tfc.z() / 2 + bfc.z() / 2);
             Vector tb(tfc, bfc);
 
-            fout << "solid polygonalCylinder" << i << " = plane("
+            fout << "solid polygonalCylinder" << i << " =\n plane("
                          << tfc.x() << ", " << tfc.y() << ", " << tfc.z() << "; "
-                         << -tb.x() << ", " << -tb.y() << ", " << -tb.z() << ")" 
+                         << -tb.x() << ", "
+                         << -tb.y() << ", "
+                         << -tb.z() << ")" 
                          << "\n and plane("
                          << bfc.x() << ", " << bfc.y() << ", " << bfc.z() << "; "
-                         << tb.x() << ", "  << tb.y() << ", "  << tb.z() << ")\n";
+                         << tb.x() << ", "
+                         << tb.y() << ", "
+                         << tb.z() << ")\n";
             for (uint j = 0; j < polCyl_ptrs[i]->facets().size(); ++j) {
                 Polygon facet = polCyl_ptrs[i]->facets()[j];
                 Vector cf = Vector(cc, facet.center());
-                fout << "and plane("
-                     << cf.x() << ", " << cf.y() << ", " << cf.z() << ", "
-                     << cf.x() << ", " << cf.y() << ", " << cf.z() << ")";
-                if (i == polCyl_ptrs[i]->facets().size() - 1)
-                     std::cout << ";";
-                std::cout << "\n";
+                fout << " and plane("
+                     << facet.center().x() << ", "
+                     << facet.center().y() << ", "
+                     << facet.center().z() << "; "
+                     << cf.x() << ", "
+                     << cf.y() << ", "
+                     << cf.z() << ")";
+                if (j == polCyl_ptrs[i]->facets().size() - 1)
+                     fout << ";";
+                fout << "\n";
             }
 
             if (i != 0)
@@ -69,21 +80,29 @@ void CSGPrinterPolygons::printToCSGAsPolygonalCylindersShells(
                              tfc.z() / 2 + bfc.z() / 2);
             Vector tb(tfc, bfc);
 
-            fout << "solid pc" << i << " = plane("
+            fout << "solid pc" << i << " =\n plane("
                          << tfc.x() << ", " << tfc.y() << ", " << tfc.z() << "; "\
-                         << -tb.x() << ", " << -tb.y() << ", " << -tb.z() << ")" \
+                         << -tb.x() << ", "
+                         << -tb.y() << ", "
+                         << -tb.z() << ")" \
                          << "\n and plane("
                          << bfc.x() << ", " << bfc.y() << ", " << bfc.z() << "; "\
-                         << tb.x() << ", "  << tb.y() << ", "  << tb.z() << ")\n";
+                         << tb.x() << ", "
+                         << tb.y() << ", "
+                         << tb.z() << ")\n";
             for (uint j = 0; j < sh_ptrs[i]->facets().size(); ++j) {
                 Polygon facet = sh_ptrs[i]->facets()[j];
                 Vector cf = Vector(cc, facet.center());
                 fout << "and plane("
-                     << cf.x() << ", " << cf.y() << ", " << cf.z() << ", "
-                     << cf.x() << ", " << cf.y() << ", " << cf.z() << ")";
-                if (i == sh_ptrs[i]->facets().size() - 1)
-                     std::cout << ";";
-                std::cout << "\n";
+                     << facet.center().x() << ", "
+                     << facet.center().y() << ", "
+                     << facet.center().z() << "; "
+                     << cf.x() << ", "
+                     << cf.y() << ", "
+                     << cf.z() << ")";
+                if (j == sh_ptrs[i]->facets().size() - 1)
+                     fout << ";";
+                fout << "\n";
             }
 
             if (i != 0)
@@ -93,9 +112,9 @@ void CSGPrinterPolygons::printToCSGAsPolygonalCylindersShells(
     fout << fillerString << " and cell;" << std::endl;
     fout << shellsString << " and cell;" << std::endl;
     fout << "tlo filler;\n";
-    fout << "solid interface = shells and not filler and cell;\n";
+    fout << "solid interface = shells and not filler;\n";
     fout << "tlo interface -transparent;\n";
-    fout << "solid matrix = not filler and not shells and cell;\n";
+    fout << "solid matrix = not shells and cell;\n";
     fout << "tlo matrix -transparent;\n";    
     fout.close();
     return;
