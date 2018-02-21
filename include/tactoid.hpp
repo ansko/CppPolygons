@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "settings_parser.hpp"
-#include "polygonal_cylinder.hpp"
+#include "geometries/polygonal_cylinder.hpp"
 
 
 class Tactoid {

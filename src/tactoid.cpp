@@ -1,5 +1,5 @@
-#include "tactoid.hpp"
-#include "settings_parser.hpp"
+#include "../include/tactoid.hpp"
+#include "../include/settings_parser.hpp"
 
 
 Tactoid::Tactoid(int stackNumber, float interlayerSpace, float layerThickness) {

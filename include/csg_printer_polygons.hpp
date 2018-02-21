@@ -8,9 +8,6 @@
 #include "settings_parser.hpp"
 
 
-const float  PI_F = 3.14159265358979f;
-
-
 class CSGPrinterPolygons
 {
 public:

@@ -179,9 +179,16 @@ bool PolygonalCylinder::crossesBox(float boxSize) {
     polygons.push_back(*topFacet_ptr);
     polygons.push_back(*bottomFacet_ptr);
 
+    if (topFacet_ptr->center().x() <= 0 || topFacet_ptr->center().x() >= boxSize ||
+        topFacet_ptr->center().y() <= 0 || topFacet_ptr->center().y() >= boxSize ||
+        topFacet_ptr->center().z() <= 0 || topFacet_ptr->center().z() >= boxSize) {
+        return true;
+    };
+    
     for(int i = 0; i < 2; i++)
-        if (polygons[i].crossesBox(boxSize))
+        if (polygons[i].crossesBox(boxSize)) {
             return true;
+        }
     return false;
 };
 
