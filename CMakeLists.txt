@@ -18,8 +18,6 @@ set (HEADERS
 	include/geometries/polygon.hpp
 	include/geometries/polygonal_cylinder.hpp
     include/geometries/vector.hpp
-    include/mesh_generation/mesh.hpp
-    include/mesh_generation/mesh_generator.hpp
     include/settings_parser.hpp
     include/percolation/percolation_checker.hpp)
 
@@ -34,8 +32,6 @@ set (SOURCES
     src/geometries/polygonal_cylinder.cpp
     src/geometries/vector.cpp
     src/settings_parser.cpp
-    src/mesh_generation/mesh.cpp
-    src/mesh_generation/mesh_generator.cpp
     src/percolation/percolation_checker.cpp
    # just one of these!
     exfoliated_interface_percolation_polygons.cpp)
