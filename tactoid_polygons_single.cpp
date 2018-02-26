@@ -46,9 +46,7 @@ int main(int argc, char **argv)
     std::vector<std::shared_ptr<PolygonalCylinder> > shells;
     int attempt = 0;
     srand(time(NULL));
-    while(polCyls.size() < N && ++attempt < MAX_ATTEMPTS) {
-        if (attempt % (MAX_ATTEMPTS / 10) == 0)
-            std::cout << attempt << std::endl;
+    {
         std::vector<std::shared_ptr<PolygonalCylinder> > newCyls;
         std::vector<std::shared_ptr<PolygonalCylinder> > newShells;
         for (uint i = 0; i < TN; ++i) {
@@ -56,28 +54,16 @@ int main(int argc, char **argv)
                 std::make_shared<PolygonalCylinder>(n, h, R);
             std::shared_ptr<PolygonalCylinder> sh_ptr =
                 std::make_shared<PolygonalCylinder>(n, h + 2 * sh, R + sh);
-            polCyl_ptr->translate(0, 0, interlayer * i + h * i + h / 2);
-            sh_ptr->translate(0, 0, interlayer * i + h * i + h / 2);
+            polCyl_ptr->rotateAroundZ(0.1 * i);
+            sh_ptr->rotateAroundZ(0.1 * i);
+            polCyl_ptr->translate(cubeSize / 2,
+                                  cubeSize / 2,
+                                  interlayer * i + h * i + h + sh);
+            sh_ptr->translate(cubeSize / 2,
+                              cubeSize / 2,
+                              interlayer * i + h * i + h + sh);
             newCyls.push_back(polCyl_ptr);
             newShells.push_back(sh_ptr);
-        }
-        float dx = static_cast<float>(rand()) / RAND_MAX * cubeSize;
-        float dy = static_cast<float>(rand()) / RAND_MAX * cubeSize;
-        float dz = static_cast<float>(rand()) / RAND_MAX * cubeSize;
-        float alpha = static_cast<float>(rand()) / RAND_MAX;
-        float beta = static_cast<float>(rand()) / RAND_MAX;
-        float gamma = static_cast<float>(rand()) / RAND_MAX;
-        for (auto polCyl_ptr : newCyls) {
-            polCyl_ptr->rotateAroundX(PI_F * alpha);
-            polCyl_ptr->rotateAroundY(PI_F * beta);
-            polCyl_ptr->rotateAroundZ(PI_F * gamma);
-            polCyl_ptr->translate(dx, dy, dz);
-        }
-        for (auto sh_ptr : newShells) {
-            sh_ptr->rotateAroundX(PI_F * alpha);
-            sh_ptr->rotateAroundY(PI_F * beta);
-            sh_ptr->rotateAroundZ(PI_F * gamma);
-            sh_ptr->translate(dx, dy, dz);
         }
         bool flag_append = true;
         for (auto polCyl_ptr : newCyls) {
@@ -92,13 +78,16 @@ int main(int argc, char **argv)
                     break;
                 }
         }
-        if(!flag_append)
-            continue;
         for (auto polCyl_ptr : newCyls)
             polCyls.push_back(polCyl_ptr);
         for (auto sh_ptr : newShells)
             shells.push_back(sh_ptr);
-    } 
+    }
+    {
+        std::shared_ptr<CSGPrinterPolygons> printer_ptr;
+        printer_ptr->printToCSGAsPolygonalCylindersShells(std::string("geofiles/start.geo"),
+                                                          polCyls, shells);
+    }
     float pcVolume =  PI_F * pow(r, 2) * h;
     float shVolume =  PI_F * pow(r + sh, 2) * (h + 2 * sh);
     float cubeVolume = pow(cubeSize, 3);
@@ -112,65 +101,65 @@ int main(int argc, char **argv)
     uint cyls_size = polCyls.size();
     int mixing_step_attempt = 0;
     for (uint i = 0; i < ms; ++i) {
-        //std::cout << "Mixing step: " << i << std::endl;
-        std::vector<std::shared_ptr<PolygonalCylinder> > newCyls = polCyls;
-        std::vector<std::shared_ptr<PolygonalCylinder> > newShells = shells;
-        std::cout << i << " " << mixing_step_attempt << std::endl;
-        for (uint pci = 0; pci < cyls_size; ++pci) {
-            bool flag_append_ready = true;
-            bool flag_appended = false;
-            mixing_step_attempt = 0;
-            while (!flag_appended && ++mixing_step_attempt < 10) {
-                //std::cout << "Mixing step: " << ++mixing_step_attempt << std::endl;
-                float small_alpha = PI_F * (static_cast<float>(rand()) / RAND_MAX) / 100;
-                float small_beta = PI_F * (static_cast<float>(rand()) / RAND_MAX) / 100;
-                float small_gamma = PI_F * (static_cast<float>(rand()) / RAND_MAX) / 100;
-                float small_dx = (static_cast<float>(rand()) / RAND_MAX - 0.5) / 10;
-                float small_dy = (static_cast<float>(rand()) / RAND_MAX - 0.5) / 10;
-                float small_dz = (static_cast<float>(rand()) / RAND_MAX - 0.5) / 10;
-                /*std::cout << small_alpha << " "
-                          << small_beta << " "
-                          << small_gamma << " "
-                          << small_dx << " " << small_dy << " " << small_dz << std::endl;*/
-                polCyls[pci]->rotateAroundX(PI_F * small_alpha);
-                polCyls[pci]->rotateAroundY(PI_F * small_beta);
-                polCyls[pci]->rotateAroundZ(PI_F * small_gamma);
-                polCyls[pci]->translate(small_dx, small_dy, small_dz);
-                shells[pci]->rotateAroundX(PI_F * small_alpha);
-                shells[pci]->rotateAroundY(PI_F * small_beta);
-                shells[pci]->rotateAroundZ(PI_F * small_gamma);
-                shells[pci]->translate(small_dx, small_dy, small_dz);
-                for (uint pcj = 0; pcj < cyls_size; ++pcj) {
-                    if (pci == pcj)
-                        continue;
-                    if (polCyls[pci]->crossesBox(cubeSize)) {
-                        flag_append_ready = false;
-                        break;
-                    }
-                    if (polCyls[pci]->crossesOtherPolygonalCylinder(*polCyls[pcj], 0)) {
-                        flag_append_ready = false;
-                        break;
-                    }
-                }
-                if (flag_append_ready) {
-                    flag_appended = true;
-                    newCyls[pci] = polCyls[pci];
-                    newShells[pci] = shells[pci];
-                }
-                else {
-                    polCyls[pci]->translate(-small_dx, -small_dy, -small_dz);
-                    polCyls[pci]->rotateAroundZ(-PI_F * small_gamma);
-                    polCyls[pci]->rotateAroundY(-PI_F * small_beta);
-                    polCyls[pci]->rotateAroundX(-PI_F * small_alpha);
-                    shells[pci]->translate(-small_dx, -small_dy, -small_dz);
-                    shells[pci]->rotateAroundZ(-PI_F * small_gamma);
-                    shells[pci]->rotateAroundY(-PI_F * small_beta);
-                    shells[pci]->rotateAroundX(-PI_F * small_alpha);
+        std::cout << "Mixing, step = " << i << std::endl;
+        for (uint j = 0; j < cyls_size; ++j) {
+            std::shared_ptr<PolygonalCylinder> cyl_ptr = polCyls[j];
+            float small_alpha = PI_F * (static_cast<float>(rand()) / RAND_MAX) / 100;
+            float small_beta = PI_F * (static_cast<float>(rand()) / RAND_MAX) / 100;
+            float small_gamma = PI_F * (static_cast<float>(rand()) / RAND_MAX) / 100;
+            float small_dx = (static_cast<float>(rand()) / RAND_MAX - 0.5) / 10;
+            float small_dy = (static_cast<float>(rand()) / RAND_MAX - 0.5) / 10;
+            float small_dz = (static_cast<float>(rand()) / RAND_MAX - 0.5) / 10;
+            bool flag_transformation_done = true;
+            /*small_alpha = 0;
+            small_beta = 0;
+            small_gamma = 0;
+            small_dx = 0;
+            small_dy = 0;
+            small_dz = 0;*/
+            /*std::cout << "dx, dy, dz, alpha, beta, gamma = "
+                      << small_dx << " " << small_dy << " " << small_dz << " "
+                      << small_alpha << " " << small_beta << " " << small_gamma << std::endl;*/
+            cyl_ptr->rotateAroundX(small_alpha);
+            cyl_ptr->rotateAroundY(small_beta);
+            cyl_ptr->rotateAroundZ(small_gamma);
+            cyl_ptr->translate(small_dx, small_dy, small_dz);
+            /*std::cout << "tfc: " << cyl_ptr->getTfc().x() << " "
+                                 << cyl_ptr->getTfc().y() << " "
+                                 << cyl_ptr->getTfc().z() << std::endl;
+            std::cout << "bfc: " << cyl_ptr->getBfc().x() << " "
+                                 << cyl_ptr->getBfc().y() << " "
+                                 << cyl_ptr->getBfc().z() << std::endl;*/
+            if (cyl_ptr->crossesBox(cubeSize)) {
+                cyl_ptr->translate(-small_dx, -small_dy, -small_dz);
+                cyl_ptr->rotateAroundZ(-small_gamma);
+                cyl_ptr->rotateAroundY(-small_beta);
+                cyl_ptr->rotateAroundX(-small_alpha);
+                flag_transformation_done = false;
+                //std::cout << "box cross: " << j << std::endl;
+                continue;
+            }
+            for (uint other_j = 0; other_j < cyls_size; ++other_j) {
+                if (other_j == j)
+                    continue;
+                //std::cout << "checking cross of pcs " << j << " " << other_j << std::endl;
+                if (cyl_ptr->crossesOtherPolygonalCylinder(*polCyls[other_j], 0)) {
+                    cyl_ptr->translate(-small_dx, -small_dy, -small_dz);
+                    cyl_ptr->rotateAroundZ(-small_gamma);
+                    cyl_ptr->rotateAroundY(-small_beta);
+                    cyl_ptr->rotateAroundX(-small_alpha);
+                    //std::cout << "crossing:-------------------------------- " << j << " " << other_j << std::endl;
+                    flag_transformation_done = false;
+                    break;
                 }
             }
+            if (flag_transformation_done) {
+                shells[j]->rotateAroundX(small_alpha);
+                shells[j]->rotateAroundY(small_beta);
+                shells[j]->rotateAroundZ(small_gamma);
+                shells[j]->translate(small_dx, small_dy, small_dz);
+            }
         }
-        polCyls = newCyls;
-        shells = newShells;
         std::string fname("geofiles/");
         fname += std::to_string(i) + ".geo";
         std::shared_ptr<CSGPrinterPolygons> printer_ptr;

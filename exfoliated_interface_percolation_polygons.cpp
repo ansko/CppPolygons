@@ -8,6 +8,7 @@
 #include "include/csg_printer_circles.hpp"
 #include "include/csg_printer_polygons.hpp"
 #include "include/geometries/polygonal_cylinder.hpp"
+#include "include/ng_errors_checkers/checker_parallel_surfaces.hpp"
 #include "include/percolation/percolation_checker.hpp"
 
 
@@ -105,6 +106,10 @@ int main(int argc, char **argv)
               << polCyls.size() * pcVolume / cubeVolume << std::endl;
     std::cout << "CylsNum = " << polCyls.size() << ", ";
     std::cout << "Attempts = " << attempt << std::endl;
+
+    std::shared_ptr<CheckerParallelSurfaces> checker_ptr =
+        std::make_shared<CheckerParallelSurfaces>(polCyls);
+    std::cout << "MIN ANGLE VALUE: " << checker_ptr->check() << std::endl;
 //    std::shared_ptr<CSGPrinterCircles> printer_ptr;
 //    printer_ptr->printToCSGAsCircleCylindersShells(FNAME, polCyls, shells);
     std::shared_ptr<CSGPrinterPolygons> printer_ptr;

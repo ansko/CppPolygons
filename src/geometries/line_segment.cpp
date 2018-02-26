@@ -33,6 +33,6 @@ Point LineSegment::end() {
 };
 
 bool LineSegment::isCrossedByOtherLineSegment(LineSegment otherLs) {
-    // todo
+    // TODO
     return true;
 };

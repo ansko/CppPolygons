@@ -73,17 +73,12 @@ float PolygonalCylinder::getR() {
 
 bool PolygonalCylinder::crossesOtherPolygonalCylinder(
         PolygonalCylinder otherPolygonalCylinder,
-        int mode
-    ) {
-    //SettingsParser sp("options.ini");
-    //sp.parseSettings();
-
-    float THICKNESS = __thickness;//(float)std::stod(sp.getProperty("THICKNESS"));
+        int mode) {
+    float THICKNESS = __thickness;
     float OUTER_RADIUS = __outerRadius;
-    float verticesNumber = __verticesNumber;//(float)std::stod(sp.getProperty("VERTICES_NUMBER"));
+    float verticesNumber = __verticesNumber;
     float edgeLength = OUTER_RADIUS * 2  * sin(PI_F / verticesNumber);
     float innerRadius = edgeLength / 2 / tan(PI_F / verticesNumber);
-    // if polygonal cylinders are very close or very far
     Point tc = topFacet_ptr->center();
     Point bc = bottomFacet_ptr->center();
     Point otherTc = otherPolygonalCylinder.topFacet().center();
@@ -99,9 +94,11 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     float veryFarDistance = 2 * pow(pow(innerRadius, 2) 
                                   + pow(THICKNESS/2, 2), 0.5);
     if (centersDistance > veryFarDistance) {
+        //std::cout << "very far!\n";
         return false;
     }
     else if (centersDistance < veryCloseDistance) {
+        //std::cout << "to close!\n";
         return true;
     }
 
@@ -130,8 +127,6 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     otherPolys.push_back(otherPolygonalCylinder.bottomFacet());
     for (auto& facet : otherPolygonalCylinder.facets())
         otherPolys.push_back(facet);
-
-
     Point pcitsc(tc.x() / 2 + bc.x() / 2,
                  tc.y() / 2 + bc.y() / 2,
                  tc.z() / 2 + bc.z() / 2);
@@ -142,7 +137,10 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     Vector votherPcitsc = Vector(otherPcitsc.x(),
                                  otherPcitsc.y(),
                                  otherPcitsc.z());
-    for (auto& poly : polys) {
+    uint polys_size = polys.size();
+    for (uint pi = 0; pi < polys_size; ++pi) {
+//    for (auto& poly : polys) {
+        auto poly = polys[pi];
         Point polyc = poly.center();
         Vector vpcitscpolyc = Vector(pcitsc, polyc);
         float coeff = 1;
@@ -154,10 +152,13 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
             pts.push_back(vertex);
         }
         poly = Polygon(pts);
-        for (auto& otherPoly : otherPolys) {
+        uint otherPolys_size = otherPolys.size();
+        for (uint opi = 0; opi < otherPolys_size; ++opi) {
+//        for (auto& otherPoly : otherPolys) {
+            auto otherPoly = otherPolys[opi];
             Point otherPolyc = otherPoly.center();
             Vector othervpcitscpolyc = Vector(otherPcitsc, otherPolyc);
-            float otherCoeff = 1;
+            float otherCoeff = 1.0;
             std::vector<Point> otherPts;
             for (auto& vertex : otherPoly.vertices()) {
                 Vector vpcitscvertex = Vector(otherPcitsc, vertex);
@@ -178,17 +179,13 @@ bool PolygonalCylinder::crossesBox(float boxSize) {
     std::vector<Polygon> polygons;
     polygons.push_back(*topFacet_ptr);
     polygons.push_back(*bottomFacet_ptr);
-
     if (topFacet_ptr->center().x() <= 0 || topFacet_ptr->center().x() >= boxSize ||
         topFacet_ptr->center().y() <= 0 || topFacet_ptr->center().y() >= boxSize ||
-        topFacet_ptr->center().z() <= 0 || topFacet_ptr->center().z() >= boxSize) {
-        return true;
-    };
-    
-    for(int i = 0; i < 2; i++)
-        if (polygons[i].crossesBox(boxSize)) {
+        topFacet_ptr->center().z() <= 0 || topFacet_ptr->center().z() >= boxSize)
             return true;
-        }
+    for(int i = 0; i < 2; i++)
+        if (polygons[i].crossesBox(boxSize))
+            return true;
     return false;
 };
 

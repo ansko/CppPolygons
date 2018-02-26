@@ -82,15 +82,8 @@ bool Plane::isCrossedByLineSegment(LineSegment ls) {
     Vector v02 = Vector(pt0, pt2);
     Vector v03 = Vector(pt0, pt3);
     Vector v04 = Vector(pt0, pt4);
- //   std::vector<std::vector<float> > M, M1, M2;
     std::array<std::array<float, 3>, 3> M1, M2;
- //   std::vector<std::vector<float> > M = new std::vector<std::vector<float> >;
     std::vector<float> s;
-//
-//    M1.reserve(9);
-//    M1[0].reserve(3);
-//    M1[1].reserve(3);
-//    M1[2].reserve(3);
     M1[0][0] = v01.x();
     M1[0][1] = v01.y();
     M1[0][2] = v01.z();
@@ -100,11 +93,6 @@ bool Plane::isCrossedByLineSegment(LineSegment ls) {
     M1[2][0] = v03.x();
     M1[2][1] = v03.y();
     M1[2][2] = v03.z();
-
-//    M2.reserve(9);
-//    M2[0].reserve(3);
-//    M2[1].reserve(3);
-//    M2[2].reserve(3);
     M2[0][0] = v01.x();
     M2[0][1] = v01.y();
     M2[0][2] = v01.z();
@@ -114,51 +102,29 @@ bool Plane::isCrossedByLineSegment(LineSegment ls) {
     M2[2][0] = v04.x();
     M2[2][1] = v04.y();
     M2[2][2] = v04.z();
-//
-/*
-    M1.push_back(s);
-    M1.push_back(s);
-    M1.push_back(s);
-    M1[0].push_back(v01.x());
-    M1[0].push_back(v01.y());
-    M1[0].push_back(v01.z());
-    M1[1].push_back(v02.x());
-    M1[1].push_back(v02.y());
-    M1[1].push_back(v02.z());
-    M1[2].push_back(v03.x());
-    M1[2].push_back(v03.y());
-    M1[2].push_back(v03.z());
-    M2.push_back(s);
-    M2.push_back(s);
-    M2.push_back(s);
-    M2[0].push_back(v01.x());
-    M2[0].push_back(v01.y());
-    M2[0].push_back(v01.z());
-    M2[1].push_back(v02.x());
-    M2[1].push_back(v02.y());
-    M2[1].push_back(v02.z());
-    M2[2].push_back(v04.x());
-    M2[2].push_back(v04.y());
-    M2[2].push_back(v04.z());
-*/
     float det1 = determinant(M1, 3);
     float det2 = determinant(M2, 3);
-    if (abs(det1) > 0.000001 && abs(det1) > 0.000001) {
+    if (fabs(det1) > 0.000001 && fabs(det1) > 0.000001) {
         if (det1 * det2 < 0) {
             Vector v3 = Vector(pt3.x(), pt3.y(), pt3.z());
             Vector v34 = Vector(pt3, pt4);
-            Vector vCross34 = v3 + v34 * abs(det1) / (abs(det1) + abs(det2));
+            Vector vCross34 = v3 + v34 * fabs(det1) / (fabs(det1) + fabs(det2));
             __ptCross = Point(vCross34.x(), vCross34.y(), vCross34.z());
             return true;
         }
         return false;
     }
-    else if (abs(det1) > 0.000001) {
+    else if (fabs(det1) > 0.000001) {
         __ptCross = pt4;
         return true;
     }
-    else {
+    else if (fabs(det2) > 0.000001) {
         __ptCross = pt3;
         return true;
+    }
+    else {
+        // the case that should not be!!!
+        //std::cout << "BOTH ARE SMALL " << det1 << " " << det2 << std::endl;
+        return false;
     }
 };
