@@ -38,8 +38,9 @@ bool Polygon::crossesOtherPolygon(Polygon otherPolygon) {
             }
         }
     }
-    if (flagSelfCrossesOther == true)
+    if (flagSelfCrossesOther == true) {
             return true;
+    }
     for (int i = 0; i < otherVertices.size(); ++i) {
         Point ptBegin = otherVertices[i];
         Point ptEnd;
@@ -61,13 +62,10 @@ bool Polygon::crossesOtherPolygon(Polygon otherPolygon) {
     return false;
 };
 
-bool Polygon::crossesOtherPolygon2(Polygon otherPolygon) {
-    return true;
-}
-
 bool Polygon::containsPoint(Point pt) {
-    float eps = 0.0001;
-    int s = __vertices.size(), flag=0;
+    float eps = 0.000001;
+    int s = __vertices.size();
+    int flag = 0;
     Vector center, otherCenter;
     for (auto vertex : __vertices)
         center = center + Vector(vertex.x(), vertex.y(), vertex.z());
@@ -102,46 +100,6 @@ bool Polygon::containsPoint(Point pt) {
     return false;
 }; 
 
-// this implementation is made for percolation case---------------------|
-// when cell is multiplied 27 times                                   //|
-/*bool Polygon::crossesBox(float boxSize) {                           //|
-    for (int i = 0; i < __vertices.size(); ++i) {                     //|
-        auto vertex = __vertices[i];                                  //|
-        auto vertex2 = Point();                                       //|
-        if (i == 0)                                                   //|
-            vertex2 = __vertices[__vertices.size() - 1];              //|
-        else                                                          //|
-            vertex2 = __vertices[i - 1];                              //|
-        if (vertex.x() < 0 && vertex2.x() > 0)                        //|
-            if(vertex.y() > 0 && vertex.y() < boxSize &&              //|
-               vertex.z() > 0 && vertex.z() < boxSize)                //|
-                return true;                                          //|
-        if (vertex.y() < 0 && vertex2.y() > 0)                        //|
-            if(vertex.x() > 0 && vertex.x() < boxSize &&              //|
-               vertex.z() > 0 && vertex.z() < boxSize)                //|
-                return true;                                          //|
-        if (vertex.z() < 0 && vertex2.z() > 0)                        //|
-            if(vertex.x() > 0 && vertex.x() < boxSize &&              //|
-               vertex.y() > 0 && vertex.y() < boxSize)                //|
-                return true;                                          //|
-        if (vertex.x() > boxSize && vertex2.x() < boxSize)            //|
-            if(vertex.y() > 0 && vertex.y() < boxSize &&              //|
-               vertex.z() > 0 && vertex.z() < boxSize)                //|
-                return true;                                          //|
-        if (vertex.y() > boxSize && vertex2.y() < boxSize)            //|
-            if(vertex.x() > 0 && vertex.x() < boxSize &&              //|
-               vertex.z() > 0 && vertex.z() < boxSize)                //|
-                return true;                                          //|
-        if (vertex.z() > boxSize && vertex2.z() < boxSize)            //|
-            if(vertex.x() > 0 && vertex.x() < boxSize &&              //|
-               vertex.y() > 0 && vertex.y() < boxSize)                //|
-                return true;                                          //|
-    }                                                                 //|
-    return false;                                                     //|
-};*/                                                                  //|
-                                                                      //|
-                                                                      //|
-// this implementation is made for all other cases //-------------------|
 bool Polygon::crossesBox(float boxSize) {
     for (int i = 0; i < __vertices.size(); ++i) {
         auto vertex = __vertices[i];

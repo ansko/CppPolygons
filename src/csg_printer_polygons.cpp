@@ -64,7 +64,7 @@ void CSGPrinterPolygons::printToCSGAsPolygonalCylindersShells(
                      << cf.y() << ", "
                      << cf.z() << ")";
                 if (j == polCyl_ptrs[i]->facets().size() - 1)
-                     fout << ";";
+                     fout << " and cell;";
                 fout << "\n";
             }
 
@@ -101,7 +101,7 @@ void CSGPrinterPolygons::printToCSGAsPolygonalCylindersShells(
                      << cf.y() << ", "
                      << cf.z() << ")";
                 if (j == sh_ptrs[i]->facets().size() - 1)
-                     fout << ";";
+                     fout << "and cell;";
                 fout << "\n";
             }
 
@@ -109,8 +109,8 @@ void CSGPrinterPolygons::printToCSGAsPolygonalCylindersShells(
                 shellsString += " or pc" + std::to_string(i);
         }
     }
-    fout << fillerString << " and cell;" << std::endl;
-    fout << shellsString << " and cell;" << std::endl;
+    fout << fillerString << ";" << std::endl;
+    fout << shellsString << ";" << std::endl;
     fout << "tlo filler;\n";
     fout << "solid interface = shells and not filler;\n";
     fout << "tlo interface -transparent;\n";

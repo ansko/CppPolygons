@@ -3,18 +3,9 @@
 
 #include "../include/det.hpp"
 
-//extern float determinant(std::vector<std::vector<float> > M, int dim) {
 extern float determinant(std::array<std::array<float, 3>, 3> M, int dim) {
-    int i = 0, j = 0, k = 0;
+    // stupid algorythm but faster than recursive...
     float det = 0;
-/*
-    for (int i = 0; i < dim; i++)
-    {
-        for(int j=0; j < dim; j++)
-            std::cout << M[i][j] << " ";
-        std::cout << std::endl;
-    }
-*/
     if (dim == 1)
         det = M[0][0];
     else if (dim == 2)
