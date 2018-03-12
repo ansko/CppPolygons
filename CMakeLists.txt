@@ -12,12 +12,13 @@ set (HEADERS
     include/csg_printer_circles.hpp
     include/csg_printer_polygons.hpp
     include/det.hpp
-	include/geometries/line_segment.hpp
-	include/geometries/plane.hpp
-	include/geometries/point.hpp
-	include/geometries/polygon.hpp
-	include/geometries/polygonal_cylinder.hpp
+    include/geometries/line_segment.hpp
+    include/geometries/plane.hpp
+    include/geometries/point.hpp
+    include/geometries/polygon.hpp
+    include/geometries/polygonal_cylinder.hpp
     include/geometries/vector.hpp
+    include/ng_errors_checkers/checker_parallel_surfaces.hpp
     include/settings_parser.hpp
     include/percolation/percolation_checker.hpp)
 
@@ -31,6 +32,7 @@ set (SOURCES
     src/geometries/polygon.cpp
     src/geometries/polygonal_cylinder.cpp
     src/geometries/vector.cpp
+    src/ng_errors_checkers/checker_parallel_surfaces.cpp
     src/settings_parser.cpp
     src/percolation/percolation_checker.cpp
    # just one of these!
