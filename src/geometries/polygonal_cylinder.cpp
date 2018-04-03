@@ -25,6 +25,8 @@ PolygonalCylinder::PolygonalCylinder(
         bottomVertices.push_back(Point(outerRadius * cos(centralAngle * i),
                                        outerRadius * sin(centralAngle * i),
                                        -thickness / 2));
+        // central vertices == vertices of side facets
+        // (2 from top, 2 from bottom)
         centralVertices.push_back(Point(outerRadius * cos(centralAngle * (i - 1)),
                                         outerRadius * sin(centralAngle * (i - 1)),
                                         thickness / 2));
@@ -44,6 +46,54 @@ PolygonalCylinder::PolygonalCylinder(
     tfc = Point(0, 0, thickness / 2);
     bfc = Point(0, 0, -thickness / 2);
 };
+
+
+PolygonalCylinder::PolygonalCylinder(
+        std::shared_ptr<Polygon> top_facet_ptr,
+        std::shared_ptr<Polygon> bottom_facet_ptr) {
+    std::shared_ptr<std::vector<Point> > top_vertices_ptr =
+        std::make_shared<std::vector<Point> >(top_facet_ptr->vertices());
+    std::shared_ptr<std::vector<Point> > bottom_vertices_ptr =
+        std::make_shared<std::vector<Point> >(bottom_facet_ptr->vertices());
+    uint vertices_number = top_facet_ptr->vertices().size();
+    for (uint vertex_number = 0; vertex_number < vertices_number; ++ vertex_number) {
+        std::vector<Point> side_vertices;
+        uint other_vertex_number = vertex_number - 1;
+        if (vertex_number == 0)
+            other_vertex_number = vertices_number - 1;
+        side_vertices.push_back(top_facet_ptr->vertices()[vertex_number]);
+        side_vertices.push_back(top_facet_ptr->vertices()[other_vertex_number]);
+        side_vertices.push_back(bottom_facet_ptr->vertices()[other_vertex_number]);
+        side_vertices.push_back(bottom_facet_ptr->vertices()[vertex_number]);
+        __facets.push_back(Polygon(side_vertices));
+
+    }
+    {
+        Point pt1 = top_facet_ptr->vertices()[0],
+              pt2 = top_facet_ptr->vertices()[1],
+              pt3 = bottom_facet_ptr->vertices()[0];
+        float edge_length = Vector(pt1, pt2).length();
+        __outerRadius = edge_length / 2 / sin(PI_F / vertices_number);
+        __verticesNumber = vertices_number;
+        __thickness = Vector(pt1, pt3).length();
+    }
+{
+    float tfc_x = 0, tfc_y = 0, tfc_z = 0,
+          bfc_x = 0, bfc_y = 0, bfc_z = 0;
+    for (uint vertex_number = 0; vertex_number < vertices_number; ++ vertex_number) {
+        tfc_x += top_facet_ptr->vertices()[vertex_number].x();
+        tfc_y += top_facet_ptr->vertices()[vertex_number].y();
+        tfc_z += top_facet_ptr->vertices()[vertex_number].z();
+        bfc_x += bottom_facet_ptr->vertices()[vertex_number].x();
+        bfc_y += bottom_facet_ptr->vertices()[vertex_number].y();
+        bfc_z += bottom_facet_ptr->vertices()[vertex_number].z();
+    }
+    tfc = Point(tfc_x / vertices_number, tfc_y / vertices_number, tfc_z / vertices_number);
+    bfc = Point(bfc_x / vertices_number, bfc_y / vertices_number, bfc_z / vertices_number);
+}
+    topFacet_ptr = top_facet_ptr;
+    bottomFacet_ptr = bottom_facet_ptr;
+}
 
 
 Point PolygonalCylinder::getTfc() {
@@ -93,16 +143,11 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     float veryCloseDistance = std::min(THICKNESS, 2 * innerRadius);
     float veryFarDistance = 2 * pow(pow(innerRadius, 2) 
                                   + pow(THICKNESS/2, 2), 0.5);
-    if (centersDistance > veryFarDistance) {
-        //std::cout << "very far!\n";
+    if (centersDistance > veryFarDistance)
         return false;
-    }
-    else if (centersDistance < veryCloseDistance) {
-        //std::cout << "to close!\n";
+    else if (centersDistance < veryCloseDistance)
         return true;
-    }
-
-
+//    std::cout << "    starting precise checking\n";
     // if main axes of the cylinders lie on far lines
     // http://en.wikipedia.org/wiki/Skew_lines#Distance_between_two_skew_lines
     // x = x1 + td1 and x = x2 + td2
@@ -117,7 +162,6 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
     float d = fabs(n.scalarMultiply(dx));
     if (d > 2 * OUTER_RADIUS)
         return false;
-
     std::vector<Polygon> polys, otherPolys;
     polys.push_back(*topFacet_ptr);
     polys.push_back(*bottomFacet_ptr);
@@ -139,7 +183,6 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
                                  otherPcitsc.z());
     uint polys_size = polys.size();
     for (uint pi = 0; pi < polys_size; ++pi) {
-//    for (auto& poly : polys) {
         auto poly = polys[pi];
         Point polyc = poly.center();
         Vector vpcitscpolyc = Vector(pcitsc, polyc);
@@ -154,7 +197,6 @@ bool PolygonalCylinder::crossesOtherPolygonalCylinder(
         poly = Polygon(pts);
         uint otherPolys_size = otherPolys.size();
         for (uint opi = 0; opi < otherPolys_size; ++opi) {
-//        for (auto& otherPoly : otherPolys) {
             auto otherPoly = otherPolys[opi];
             Point otherPolyc = otherPoly.center();
             Vector othervpcitscpolyc = Vector(otherPcitsc, otherPolyc);
