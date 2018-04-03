@@ -11,6 +11,8 @@
 class PolygonalCylinder {
 public:
     PolygonalCylinder(int verticesNumber, float thickness, float outerRadius);
+    PolygonalCylinder(std::shared_ptr<Polygon> top_facet_ptr,
+                      std::shared_ptr<Polygon> bottom_facet_ptr);
     Polygon topFacet();
     Polygon bottomFacet();
     std::vector<Polygon> facets();

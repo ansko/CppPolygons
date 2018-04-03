@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6) 
  
-set (PROJECT polygonal) 
+set (PROJECT minmax) 
  
 project (${PROJECT}) 
 
@@ -36,7 +36,12 @@ set (SOURCES
     src/settings_parser.cpp
     src/percolation/percolation_checker.cpp
    # just one of these!
-    exfoliated_interface_percolation_polygons.cpp)
+   # exfoliated_interface_percolation_polygons.cpp)
+   # test.cpp)
+   # test2.cpp)
+   # reparsed_crosses.cpp)
+    reparsed_minmax.cpp)
+   # test3.cpp)
    # src/mains/main_exfoliated.cpp
    # src/mains/main_exfoliated_interface.cpp)
    # src/mains/main_exfoliated_shell.cpp)
